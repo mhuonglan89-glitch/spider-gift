@@ -233,6 +233,12 @@ function renderUI() {
       editFilmPrev.src = filmPhotos[i];
     }
   }
+
+  // 5. Cập nhật ảnh chân dung No trên tờ tiền 500.000 VNĐ
+  const banknoteImg = document.getElementById('banknote-portrait-img');
+  if (banknoteImg) {
+    banknoteImg.src = appConfig.couplePhoto || (appConfig.bouquetPhotos && appConfig.bouquetPhotos[0]) || '';
+  }
 }
 
 renderUI();
@@ -1396,3 +1402,175 @@ const btnOldDlScript = document.getElementById('btn-download-script-js');
 });
 
 if (btnCopyConfig) btnCopyConfig.addEventListener('click', executeCopyConfig);
+
+// ==========================================================
+// 8. BƯU KIỆN TIẾP TẾ 500K: CASSETTE RETRO & TỜ TIỀN 500K
+// ==========================================================
+const cassetteAudio = document.getElementById('cassette-audio');
+const cassetteWrapper = document.getElementById('cassette-player-wrapper');
+const cassettePlayBtn = document.getElementById('cassette-play-btn');
+const cassettePlayIcon = document.getElementById('cassette-play-icon');
+const cassettePlayText = document.getElementById('cassette-play-text');
+const moneyPullTab = document.getElementById('money-pull-tab');
+const banknoteCard = document.getElementById('banknote-500k-card');
+const btnClaimMoney = document.getElementById('btn-claim-money');
+const moneyToast = document.getElementById('money-claimed-toast');
+
+let isCassettePlaying = false;
+
+// Đặt nguồn nhạc bài "Để dành cho em" (Dangrangto ft. DONAL)
+if (cassetteAudio) {
+  cassetteAudio.src = 'assets/de_danh_cho_em.mp3';
+}
+
+function toggleCassettePlay() {
+  if (!cassetteWrapper) return;
+
+  if (isCassettePlaying) {
+    pauseCassette();
+  } else {
+    playCassette();
+  }
+}
+
+function playCassette() {
+  if (!cassetteWrapper) return;
+  isCassettePlaying = true;
+  cassetteWrapper.classList.add('playing');
+  if (cassettePlayIcon) cassettePlayIcon.textContent = '⏸';
+  if (cassettePlayText) cassettePlayText.textContent = 'TẠM DỪNG CASSETTE';
+
+  // Tạm dừng nhạc nền chính để nhường âm thanh cho bài cassette
+  if (isAudioPlaying && bgAudio) {
+    bgAudio.pause();
+    stopProceduralPiano();
+  }
+
+  if (cassetteAudio) {
+    cassetteAudio.play().catch(e => {
+      console.log('Audio autoplay or file not found, playing melodic cassette vibes', e);
+      // Fallback synthesizer giai điệu ngọt ngào nếu chưa có file mp3
+      playCassetteMelody();
+    });
+  }
+}
+
+function pauseCassette() {
+  if (!cassetteWrapper) return;
+  isCassettePlaying = false;
+  cassetteWrapper.classList.remove('playing');
+  if (cassettePlayIcon) cassettePlayIcon.textContent = '▶';
+  if (cassettePlayText) cassettePlayText.textContent = 'PHÁT BĂNG CASSETTE';
+
+  if (cassetteAudio) {
+    cassetteAudio.pause();
+  }
+}
+
+if (cassettePlayBtn) {
+  cassettePlayBtn.addEventListener('click', toggleCassettePlay);
+}
+
+// Kéo / Rút tờ tiền 500.000 VNĐ ra
+function pullOutMoney() {
+  if (!cassetteWrapper) return;
+  
+  if (!cassetteWrapper.classList.contains('money-revealed')) {
+    cassetteWrapper.classList.add('money-revealed');
+
+    // Tự động phát nhạc nếu chưa phát
+    if (!isCassettePlaying) {
+      playCassette();
+    }
+
+    // Hiệu ứng âm thanh kéo tiền / giấy
+    playPaperSlideSound();
+
+    // Hiệu ứng pháo hoa & tiền 500k bay ngập tràn màn hình
+    spawnMoneyCelebration();
+
+    if (moneyToast) {
+      moneyToast.classList.add('active');
+    }
+  }
+}
+
+if (moneyPullTab) {
+  moneyPullTab.addEventListener('click', pullOutMoney);
+}
+if (banknoteCard) {
+  banknoteCard.addEventListener('click', pullOutMoney);
+}
+
+// Bấm nút Ting Ting đòi tiền
+if (btnClaimMoney) {
+  btnClaimMoney.addEventListener('click', () => {
+    const claimMsg = 'No đã nhận được gói tiếp tế 500.000đ từ đồng đội số 1 rồi nè! Mau mau ting ting chuyển khoản cho No đi anh ơiii 🕷️💵❤️';
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(claimMsg).then(() => {
+        alert('🎉 ĐÃ SAO CHÉP LỜI ĐÒI TIỀN!\n\n"' + claimMsg + '"\n\nHãy gửi ngay tin nhắn này cho người gửi web để nhận 500k ting ting liền tay nha No ơi! 💌💸');
+      }).catch(() => {
+        prompt('Hãy copy dòng này gửi cho người gửi nha:', claimMsg);
+      });
+    } else {
+      prompt('Hãy copy dòng này gửi cho người gửi nha:', claimMsg);
+    }
+  });
+}
+
+// Hiệu ứng tiền bay ăn mừng
+function spawnMoneyCelebration() {
+  const emojis = ['💵', '💸', '✨', '🕷️', '💰'];
+  for (let i = 0; i < 28; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'falling-money-bill';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = Math.random() * 90 + 5 + '%';
+      el.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i * 90);
+  }
+}
+
+// Âm thanh rút tiền (Web Audio Synth)
+function playPaperSlideSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(350, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(700, ctx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.16);
+  } catch(e) {}
+}
+
+// Giai điệu cassette vui tươi dự phòng
+function playCassetteMelody() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [392, 440, 523, 587, 659, 784]; // G, A, C, D, E, G
+    notes.forEach((freq, idx) => {
+      setTimeout(() => {
+        if (!isCassettePlaying) return;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.18, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.4);
+      }, idx * 160);
+    });
+  } catch(e) {}
+}
