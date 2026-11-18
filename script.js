@@ -1194,7 +1194,7 @@ document.getElementById('btn-reset-default').addEventListener('click', () => {
 // Tính năng quan trọng nhất giúp người dùng gửi cho người nhận
 // mà hoàn toàn KHÔNG CẦN CHẠY SERVER!
 // ==========================================================
-document.getElementById('btn-download-html').addEventListener('click', async () => {
+async function executeExportIndexHtml() {
   // Cập nhật text mới nhất trước khi tải
   appConfig.bouquetQuote = document.getElementById('edit-bouquet-quote').value;
   const rawMsgs = document.getElementById('edit-flying-messages').value.split('\n');
@@ -1206,6 +1206,7 @@ document.getElementById('btn-download-html').addEventListener('click', async () 
 
   // Đồng bộ ảnh kỷ niệm bay trước khi đóng gói file
   syncMemoryPhotosWithUserUploads();
+  saveToLocalStorage();
 
   try {
     // Đọc file CSS và Script hiện tại để nhúng thẳng vào 1 file duy nhất
@@ -1268,7 +1269,16 @@ document.getElementById('btn-download-html').addEventListener('click', async () 
     console.error('Lỗi xuất bản file HTML:', err);
     alert('Không thể tạo file tự động: ' + err.message);
   }
-});
+}
+
+// Gắn sự kiện tải file index.html cho cả 3 nút (trong tab, ở footer và ở header)
+const btnDl1 = document.getElementById('btn-download-html');
+const btnDlFooter = document.getElementById('btn-download-html-footer');
+const btnDlHeader = document.getElementById('btn-download-html-header');
+
+if (btnDl1) btnDl1.addEventListener('click', executeExportIndexHtml);
+if (btnDlFooter) btnDlFooter.addEventListener('click', executeExportIndexHtml);
+if (btnDlHeader) btnDlHeader.addEventListener('click', executeExportIndexHtml);
 
 // Nút tải file script.js đã kèm cấu hình ảnh dành cho bạn nào muốn giữ cấu trúc nhiều file
 const btnDownloadScript = document.getElementById('btn-download-script-js');
