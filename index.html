@@ -208,20 +208,27 @@
 
 
       <!-- ==============================================
-           GIAO DIỆN 2: CHỮ BAY ĐỘNG & ẢNH KỶ NIỆM (FLYING)
+           GIAO DIỆN 2: VŨ TRỤ KỶ NIỆM 3D/4D SPIDER-MAN
+           Tự do xoay 360 độ, cuộn phóng to nhỏ, không bị đếm ngược
            ============================================== -->
       <section class="scene scene-flying" id="scene-flying">
-        <!-- Canvas vẽ hiệu ứng đường hầm sao / hạt tim bay 3D -->
+        <!-- Canvas vẽ hiệu ứng mạng nhện sao / hạt lấp lánh 3D -->
         <canvas id="flying-particles-canvas"></canvas>
 
-        <!-- Container chứa các câu chữ phát sáng neon & ảnh trôi -->
-        <div class="flying-elements-stage" id="flying-elements-stage">
-          <!-- Các câu nói neon và ảnh sẽ được sinh ra liên tục bằng JS -->
+        <!-- Hướng dẫn điều khiển tương tác 3D -->
+        <div class="space-3d-hint" id="space-3d-hint">
+          <span class="hint-badge">🕷️ 3D INTERACTIVE MEMORY SPACE</span>
+          <span class="hint-text">Chạm kéo để xoay 360° • Cuộn / Chụm để phóng to nhỏ • Nhấn vào ảnh để xem gần</span>
         </div>
 
-        <!-- Thanh tiến trình thời gian hiệu ứng -->
-        <div class="flying-timeline-bar">
-          <div class="timeline-fill" id="flying-timeline-fill"></div>
+        <!-- Viewport 3D chính -->
+        <div class="space-3d-viewport" id="space-3d-viewport">
+          <div class="space-3d-world" id="space-3d-world">
+            <!-- Vòng quỹ đạo ảnh kỷ niệm 3D -->
+            <div class="space-orbit-cards" id="space-orbit-cards"></div>
+            <!-- Các câu chữ neon phát sáng lơ lửng 3D -->
+            <div class="space-orbit-texts" id="space-orbit-texts"></div>
+          </div>
         </div>
 
         <!-- Lời bài hát chạy ở giữa dưới -->
@@ -229,10 +236,25 @@
           "TA CỨ THẾ CỨ THẾ YÊU..."
         </div>
 
-        <!-- Nút bỏ qua / tiếp tục nhanh -->
-        <button id="btn-skip-flying" class="skip-btn" title="Đi đến phong thư">
-          <span>Xem thiệp thư ngay</span> ➔
-        </button>
+        <!-- Nút chuyển sang phong thư Spider-Man chủ động (không ép buộc đếm ngược) -->
+        <div class="flying-action-container">
+          <button id="btn-skip-flying" class="spider-continue-btn" title="Mở bức thư bí mật Spider-Man">
+            <span class="spider-btn-icon">🕷️</span>
+            <span class="spider-btn-text">Tiếp tục: Mở Thư Mật Cho No</span>
+            <span class="spider-btn-arrow">➔</span>
+          </button>
+        </div>
+
+        <!-- Modal phóng to chi tiết khi bấm vào 1 ảnh 3D -->
+        <div class="space-photo-lightbox" id="space-photo-lightbox">
+          <div class="lightbox-card">
+            <button class="lightbox-close" id="lightbox-close">✕</button>
+            <div class="lightbox-img-wrap">
+              <img id="lightbox-img" src="" alt="Ảnh kỷ niệm">
+            </div>
+            <p class="lightbox-caption" id="lightbox-caption">Khoảnh khắc đáng nhớ cùng No 🕷️❤️</p>
+          </div>
+        </div>
       </section>
 
 

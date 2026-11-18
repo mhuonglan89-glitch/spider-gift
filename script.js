@@ -237,6 +237,20 @@ function renderUI() {
 
 renderUI();
 
+// Tự động kiểm tra chế độ hiển thị: Khi đưa lên Vercel cho No xem sẽ ẩn nút chỉnh sửa
+function initRecipientModeCheck() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const isLocalFile = window.location.protocol === 'file:';
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const hasEditParam = urlParams.has('edit') || urlParams.get('mode') === 'edit';
+
+  // Khi host trên Vercel hoặc web bên ngoài và không có tham số ?edit=1 -> Chế độ Người Nhận (Ẩn nút chỉnh sửa)
+  if (!isLocalFile && !isLocalhost && !hasEditParam) {
+    document.body.classList.add('recipient-mode');
+  }
+}
+initRecipientModeCheck();
+
 
 // ==========================================================
 // 4. CHUYỂN PHÂN CẢNH (SCENE CONTROLLER)
@@ -348,155 +362,257 @@ window.addEventListener('mouseup', cancelHold);
 
 
 // ==========================================================
-// 6. GIAO DIỆN CHỮ BAY ĐỘNG & ẢNH KỶ NIỆM (SCENE 2)
+// 6. GIAO DIỆN VŨ TRỤ KỶ NIỆM 3D / 4D (SCENE 2)
+// Tự do xoay 360, phóng to nhỏ, không đếm ngược thời gian
 // ==========================================================
-let flyingInterval = null;
-let flyingTimer = null;
-let flyingProgressInterval = null;
 let isFlyingActive = false;
+let space3DAnimId = null;
 
-const flyingStage = document.getElementById('flying-elements-stage');
-const flyingTimelineFill = document.getElementById('flying-timeline-fill');
+// Tọa độ góc xoay và phóng to thu nhỏ
+let spaceRotX = 6;
+let spaceRotY = 0;
+let spaceZoom = 1;
+let targetRotX = 6;
+let targetRotY = 0;
+let targetZoom = 1;
+
+let isSpaceDragging = false;
+let spacePointerStartX = 0;
+let spacePointerStartY = 0;
+let touchPinchDistStart = 0;
+let touchPinchZoomStart = 1;
+let spaceHasInteracted = false;
+
+// DOM Elements 3D
+const spaceViewport = document.getElementById('space-3d-viewport');
+const spaceWorld = document.getElementById('space-3d-world');
+const spaceOrbitCards = document.getElementById('space-orbit-cards');
+const spaceOrbitTexts = document.getElementById('space-orbit-texts');
+const spaceHint = document.getElementById('space-3d-hint');
+const spaceLightbox = document.getElementById('space-photo-lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const lightboxClose = document.getElementById('lightbox-close');
 
 function startFlyingScene() {
   isFlyingActive = true;
-  flyingStage.innerHTML = '';
-  flyingTimelineFill.style.width = '0%';
-
-  const durationSec = Math.max(5, appConfig.flyingDuration || 12);
-  const startTime = Date.now();
-
-  // Cập nhật thanh timeline
-  clearInterval(flyingProgressInterval);
-  flyingProgressInterval = setInterval(() => {
-    const elapsed = (Date.now() - startTime) / 1000;
-    const pct = Math.min((elapsed / durationSec) * 100, 100);
-    flyingTimelineFill.style.width = pct + '%';
-  }, 100);
-
-  // Sinh liên tục câu chữ neon và ảnh bay
-  clearInterval(flyingInterval);
-  spawnRandomFlyingElement(); // Sinh ngay đợt đầu
-  flyingInterval = setInterval(() => {
-    if (isFlyingActive) {
-      spawnRandomFlyingElement();
-    }
-  }, 500);
-
-  // Tự động kết thúc sau durationSec và chuyển sang phong thư
-  clearTimeout(flyingTimer);
-  flyingTimer = setTimeout(() => {
-    if (isFlyingActive) {
-      switchScene('envelope');
-    }
-  }, durationSec * 1000);
+  init3DOrbitUniverse();
 }
 
 function stopFlyingScene() {
   isFlyingActive = false;
-  clearInterval(flyingInterval);
-  clearInterval(flyingProgressInterval);
-  clearTimeout(flyingTimer);
-}
-
-// Nút xem thiệp ngay (bỏ qua hiệu ứng bay)
-btnSkipFlying.addEventListener('click', () => {
-  switchScene('envelope');
-});
-
-// Hàm sinh phần tử ngẫu nhiên: Chữ neon, Ảnh kỷ niệm, Trái tim
-function spawnRandomFlyingElement() {
-  const activePhotos = getActiveFlyingPhotos();
-  const randType = Math.random();
-
-  // Chỉ cho ảnh kỷ niệm xuất hiện khi người dùng ĐÃ có ảnh thật tải lên (không bao giờ lấy ảnh mẫu rỗng)
-  if (activePhotos.length > 0 && randType < 0.35) {
-    spawnFlyingMemoryPhoto(activePhotos);
-  } 
-  // 55% xác suất ra chữ neon phát sáng
-  else if (randType < 0.90) {
-    spawnFlyingNeonText();
-  } 
-  // 10% ra trái tim phát sáng
-  else {
-    spawnFlyingGlowHeart();
+  if (space3DAnimId) {
+    cancelAnimationFrame(space3DAnimId);
+    space3DAnimId = null;
   }
 }
 
-function spawnFlyingNeonText() {
-  const messages = appConfig.flyingMessages;
-  if (!messages || messages.length === 0) return;
+// Khởi tạo thế giới 3D
+function init3DOrbitUniverse() {
+  if (!spaceOrbitCards || !spaceOrbitTexts) return;
 
-  const msg = messages[Math.floor(Math.random() * messages.length)];
-  const el = document.createElement('div');
-  el.className = 'flying-neon-text';
+  spaceOrbitCards.innerHTML = '';
+  spaceOrbitTexts.innerHTML = '';
 
-  // Random kích thước
-  const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
-  const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-  el.classList.add(sizeClass);
+  // Lấy toàn bộ ảnh kỷ niệm thật đã tải lên
+  const photos = getActiveFlyingPhotos();
+  const isMobile = window.innerWidth <= 600;
+  const radius = isMobile ? 250 : 360;
 
-  // Random vị trí ngang (10% đến 80%)
-  const posX = Math.random() * 70 + 5;
-  el.style.left = posX + '%';
+  // 1. Phân bổ các thẻ ảnh 3D thành vòng quỹ đạo không gian
+  if (photos && photos.length > 0) {
+    const numCards = photos.length;
+    photos.forEach((src, idx) => {
+      const angleDeg = (360 / numCards) * idx;
+      
+      // Độ cao lượn sóng nhẹ nhàng
+      const yOffset = Math.sin(idx * 1.5) * (isMobile ? 35 : 55);
+      const tiltX = Math.cos(idx * 1.2) * 8;
 
-  // Thời gian bay 6s - 10s
-  const dur = (Math.random() * 3 + 6.5).toFixed(1);
-  el.style.animationDuration = `${dur}s`;
+      const card = document.createElement('div');
+      card.className = 'space-3d-card';
+      card.style.transform = `rotateY(${angleDeg}deg) translateZ(${radius}px) translateY(${yOffset}px) rotateX(${tiltX}deg)`;
 
-  el.textContent = msg;
-  flyingStage.appendChild(el);
+      const imgWrap = document.createElement('div');
+      imgWrap.className = 'card-img-wrap';
 
-  el.addEventListener('animationend', () => el.remove());
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Kỷ niệm No #${idx + 1}`;
+      img.loading = 'lazy';
+      img.onerror = () => { card.remove(); };
+
+      imgWrap.appendChild(img);
+      card.appendChild(imgWrap);
+
+      // Icon nhện Spider-Man ở góc
+      const spiderPin = document.createElement('span');
+      spiderPin.className = 'card-pin-spider';
+      spiderPin.textContent = idx % 2 === 0 ? '🕷️' : '🕸️';
+      card.appendChild(spiderPin);
+
+      // Nhãn chữ viết tay bên dưới ảnh
+      const tag = document.createElement('div');
+      tag.className = 'card-bottom-tag';
+      tag.textContent = `No #${idx + 1} ♡`;
+      card.appendChild(tag);
+
+      // Nhấn vào ảnh để xem cận cảnh phóng to (Lightbox)
+      card.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openPhotoLightbox(src, `Khoảnh khắc đáng nhớ cùng No #${idx + 1} 🕷️❤️`);
+      });
+
+      spaceOrbitCards.appendChild(card);
+    });
+  }
+
+  // 2. Phân bổ các câu chữ neon 3D lơ lửng quanh không gian
+  const msgs = appConfig.flyingMessages || [];
+  if (msgs.length > 0) {
+    const textRadius = radius * 0.92;
+    msgs.forEach((txt, idx) => {
+      const angleDeg = (360 / msgs.length) * idx + 25;
+      const yOffset = ((idx % 3) - 1) * (isMobile ? 70 : 100);
+
+      const textEl = document.createElement('div');
+      textEl.className = 'space-3d-text' + (idx % 2 === 0 ? ' highlight' : '');
+      textEl.style.transform = `rotateY(${angleDeg}deg) translateZ(${textRadius}px) translateY(${yOffset}px)`;
+      textEl.textContent = txt;
+
+      spaceOrbitTexts.appendChild(textEl);
+    });
+  }
+
+  // 3. Khởi động vòng lặp diễn hoạt 3D (Animation loop)
+  if (space3DAnimId) cancelAnimationFrame(space3DAnimId);
+  update3DWorld();
 }
 
-function spawnFlyingMemoryPhoto(pool) {
-  const photos = (pool && pool.length > 0) ? pool : getActiveFlyingPhotos();
-  if (!photos || photos.length === 0) return;
+// Vòng lặp cập nhật chuyển động 3D mượt mà
+function update3DWorld() {
+  if (!isFlyingActive) return;
 
-  const photoUrl = photos[Math.floor(Math.random() * photos.length)];
-  if (!photoUrl || typeof photoUrl !== 'string' || photoUrl.startsWith('data:image/svg+xml')) return;
+  // Quán tính nội suy chuyển động xoay & zoom
+  spaceRotX += (targetRotX - spaceRotX) * 0.08;
+  spaceRotY += (targetRotY - spaceRotY) * 0.08;
+  spaceZoom += (targetZoom - spaceZoom) * 0.08;
 
-  const card = document.createElement('div');
-  card.className = 'flying-memory-card';
+  // Khi người dùng không chạm vào thì hệ thống tự trôi xoay 360 độ từ tốn kiểu không trọng lực
+  if (!isSpaceDragging) {
+    targetRotY += 0.05;
+  }
 
-  const rot = (Math.random() * 24 - 12).toFixed(1);
-  card.style.setProperty('--rot', `${rot}deg`);
+  if (spaceWorld) {
+    spaceWorld.style.transform = `scale(${spaceZoom}) rotateX(${spaceRotX}deg) rotateY(${spaceRotY}deg)`;
+  }
 
-  const posX = Math.random() * 65 + 10;
-  card.style.left = posX + '%';
-
-  const dur = (Math.random() * 3 + 7).toFixed(1);
-  card.style.animationDuration = `${dur}s`;
-
-  // Tạo DOM element img an toàn, tuyệt đối không chèn trực tiếp chuỗi vào innerHTML
-  const img = document.createElement('img');
-  img.alt = 'Kỷ niệm No';
-  img.src = photoUrl;
-  img.onerror = () => {
-    // Tự hủy thẻ ngay lập tức nếu ảnh lỗi, không để lại khung trắng hay vết icon hỏng
-    card.remove();
-  };
-
-  card.appendChild(img);
-  flyingStage.appendChild(card);
-
-  card.addEventListener('animationend', () => card.remove());
+  space3DAnimId = requestAnimationFrame(update3DWorld);
 }
 
-function spawnFlyingGlowHeart() {
-  const heart = document.createElement('div');
-  heart.className = 'flying-glow-heart';
-  heart.textContent = Math.random() > 0.3 ? '💖' : '💕';
+// Bắt sự kiện tương tác chuột & chạm đa điểm (Drag to rotate, pinch / wheel to zoom)
+if (spaceViewport) {
+  // 1. Chuột / Touch Drag để xoay 360
+  spaceViewport.addEventListener('pointerdown', (e) => {
+    isSpaceDragging = true;
+    spacePointerStartX = e.clientX;
+    spacePointerStartY = e.clientY;
 
-  const posX = Math.random() * 85 + 5;
-  heart.style.left = posX + '%';
+    if (!spaceHasInteracted && spaceHint) {
+      spaceHasInteracted = true;
+      setTimeout(() => spaceHint.classList.add('fade-out'), 1200);
+    }
+  });
 
-  const dur = (Math.random() * 2 + 5).toFixed(1);
-  heart.style.animationDuration = `${dur}s`;
+  window.addEventListener('pointermove', (e) => {
+    if (!isSpaceDragging || !isFlyingActive) return;
+    const deltaX = e.clientX - spacePointerStartX;
+    const deltaY = e.clientY - spacePointerStartY;
 
-  flyingStage.appendChild(heart);
-  heart.addEventListener('animationend', () => heart.remove());
+    targetRotY += deltaX * 0.42;
+    targetRotX -= deltaY * 0.32;
+
+    // Giới hạn góc nghiêng lên xuống để không bị lật ngược
+    targetRotX = Math.max(-50, Math.min(50, targetRotX));
+
+    spacePointerStartX = e.clientX;
+    spacePointerStartY = e.clientY;
+  });
+
+  window.addEventListener('pointerup', () => {
+    isSpaceDragging = false;
+  });
+
+  window.addEventListener('pointercancel', () => {
+    isSpaceDragging = false;
+  });
+
+  // 2. Con lăn chuột để phóng to / thu nhỏ (Zoom)
+  spaceViewport.addEventListener('wheel', (e) => {
+    if (!isFlyingActive) return;
+    e.preventDefault();
+
+    targetZoom -= e.deltaY * 0.0015;
+    targetZoom = Math.max(0.55, Math.min(2.4, targetZoom));
+
+    if (!spaceHasInteracted && spaceHint) {
+      spaceHasInteracted = true;
+      spaceHint.classList.add('fade-out');
+    }
+  }, { passive: false });
+
+  // 3. Touch 2 ngón tay chụm mở để phóng to / thu nhỏ trên điện thoại (Pinch zoom)
+  spaceViewport.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      touchPinchDistStart = Math.hypot(dx, dy);
+      touchPinchZoomStart = targetZoom;
+    }
+  }, { passive: true });
+
+  spaceViewport.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && touchPinchDistStart > 0) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const currentDist = Math.hypot(dx, dy);
+      const factor = currentDist / touchPinchDistStart;
+      targetZoom = Math.max(0.55, Math.min(2.4, touchPinchZoomStart * factor));
+
+      if (!spaceHasInteracted && spaceHint) {
+        spaceHasInteracted = true;
+        spaceHint.classList.add('fade-out');
+      }
+    }
+  }, { passive: true });
+}
+
+// Lightbox xem ảnh cận cảnh phóng to
+function openPhotoLightbox(src, caption) {
+  if (!spaceLightbox || !lightboxImg) return;
+  lightboxImg.src = src;
+  const captionEl = document.getElementById('lightbox-caption');
+  if (captionEl) captionEl.textContent = caption || 'Khoảnh khắc đáng nhớ cùng No 🕷️❤️';
+  spaceLightbox.classList.add('active');
+}
+
+function closePhotoLightbox() {
+  if (spaceLightbox) spaceLightbox.classList.remove('active');
+}
+
+if (lightboxClose) {
+  lightboxClose.addEventListener('click', closePhotoLightbox);
+}
+if (spaceLightbox) {
+  spaceLightbox.addEventListener('click', (e) => {
+    if (e.target === spaceLightbox) closePhotoLightbox();
+  });
+}
+
+// Nút chuyển sang phong thư Spider-Man chủ động
+if (btnSkipFlying) {
+  btnSkipFlying.addEventListener('click', () => {
+    switchScene('envelope');
+  });
 }
 
 
