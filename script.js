@@ -68,6 +68,11 @@ const DEFAULT_CONFIG = {
 // State hiện tại của ứng dụng
 let appConfig = JSON.parse(JSON.stringify(DEFAULT_CONFIG));
 
+// Nếu có file config.js được nạp thì ưu tiên sử dụng cấu hình đã lưu
+if (typeof USER_SAVED_CONFIG !== 'undefined' && USER_SAVED_CONFIG && typeof USER_SAVED_CONFIG === 'object') {
+  appConfig = { ...DEFAULT_CONFIG, ...USER_SAVED_CONFIG };
+}
+
 function saveToLocalStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appConfig));
@@ -1190,11 +1195,10 @@ document.getElementById('btn-reset-default').addEventListener('click', () => {
 
 
 // ==========================================================
-// 13. TÍNH NĂNG XUẤT 1 FILE HTML DUY NHẤT (ZERO SERVER EXPORTER)
-// Tính năng quan trọng nhất giúp người dùng gửi cho người nhận
-// mà hoàn toàn KHÔNG CẦN CHẠY SERVER!
+// 13. TÍNH NĂNG XUẤT CẤU HÌNH (ZERO FETCH - 100% AN TOÀN TRÊN FILE://)
+// Hoạt động 100% trên cả file:/// không bao giờ bị lỗi Failed to fetch
 // ==========================================================
-async function executeExportIndexHtml() {
+function executeDownloadConfigFile() {
   // Cập nhật text mới nhất trước khi tải
   appConfig.bouquetQuote = document.getElementById('edit-bouquet-quote').value;
   const rawMsgs = document.getElementById('edit-flying-messages').value.split('\n');
@@ -1209,109 +1213,70 @@ async function executeExportIndexHtml() {
   saveToLocalStorage();
 
   try {
-    // Đọc file CSS và Script hiện tại để nhúng thẳng vào 1 file duy nhất
-    const cssResponse = await fetch('style.css');
-    const cssText = await cssResponse.text();
-
-    const jsResponse = await fetch('script.js');
-    let jsText = await jsResponse.text();
-
-    // Thay thế DEFAULT_CONFIG trong code bằng cấu hình người dùng vừa chỉnh
-    const serializedConfig = JSON.stringify(appConfig, null, 2);
-    jsText = jsText.replace(/const DEFAULT_CONFIG = \{[\s\S]*?\n\};/, `const DEFAULT_CONFIG = ${serializedConfig};`);
-
-    // Tạo HTML hoàn chỉnh tự chứa tất cả
-    let fullHtml = document.documentElement.outerHTML;
-
-    // Thay thế thẻ link CSS bằng inline <style>
-    fullHtml = fullHtml.replace('<link rel="stylesheet" href="style.css">', `<style>\n${cssText}\n</style>`);
-
-    // Thay thế thẻ script bằng inline <script>
-    fullHtml = fullHtml.replace('<script src="script.js"></script>', `<script>\n${jsText}\n</script>`);
-
-    // Nhúng base64 các hình ảnh truyện tranh để file chạy độc lập 100% không cần tải ngoài
-    async function toDataUrl(path) {
-      try {
-        const res = await fetch(path);
-        const b = await res.blob();
-        return new Promise(resolve => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
-          reader.readAsDataURL(b);
-        });
-      } catch (e) {
-        return path;
-      }
-    }
-
-    try {
-      const swingData = await toDataUrl('spiderman_swing_transparent.png');
-      const trioData = await toDataUrl('spiderman_trio_transparent.png');
-      const marvelData = await toDataUrl('marvel_badge.png');
-      fullHtml = fullHtml.replace(/src="spiderman_swing_transparent\.png"/g, `src="${swingData}"`);
-      fullHtml = fullHtml.replace(/src="spiderman_trio_transparent\.png"/g, `src="${trioData}"`);
-      fullHtml = fullHtml.replace(/src="marvel_badge\.png"/g, `src="${marvelData}"`);
-    } catch (e) {}
-
-    // Đóng gói thành Blob và kích hoạt tải về
-    const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+    const fileContent = '/**\n * CẤU HÌNH NGƯỜI DÙNG - SPIDER-MAN GIFT WEB\n * Tự động tạo và nhúng sẵn 100% ảnh, lời chúc và thiết lập của bạn.\n */\nconst USER_SAVED_CONFIG = ' + JSON.stringify(appConfig, null, 2) + ';\n';
+    const blob = new Blob([fileContent], { type: 'application/javascript;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'index.html';
+    a.download = 'config.js';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    alert('🎉 Đã tải file [index.html] tự chứa 100% ảnh và lời chúc của bạn!\n\nBạn chỉ cần:\n1. Copy đè file index.html này vào thư mục dự án flower-gift-web.\n2. Chạy lệnh git push lên GitHub là Vercel sẽ tự động cập nhật ngay lập tức!');
+    alert('🎉 ĐÃ TẢI FILE [config.js] THÀNH CÔNG!\n\nFile này đã chứa toàn bộ ảnh và lời chúc của bạn.\nBạn chỉ cần lưu/kéo đè file config.js này vào thư mục dự án flower-gift-web, rồi chạy git push lên GitHub là Vercel sẽ tự động hiển thị đầy đủ cho người nhận!');
   } catch (err) {
-    console.error('Lỗi xuất bản file HTML:', err);
+    console.error('Lỗi xuất file config.js:', err);
     alert('Không thể tạo file tự động: ' + err.message);
   }
 }
 
-// Gắn sự kiện tải file index.html cho cả 3 nút (trong tab, ở footer và ở header)
-const btnDl1 = document.getElementById('btn-download-html');
-const btnDlFooter = document.getElementById('btn-download-html-footer');
-const btnDlHeader = document.getElementById('btn-download-html-header');
+function executeCopyConfig() {
+  appConfig.bouquetQuote = document.getElementById('edit-bouquet-quote').value;
+  const rawMsgs = document.getElementById('edit-flying-messages').value.split('\n');
+  appConfig.flyingMessages = rawMsgs.map(s => s.trim()).filter(s => s.length > 0);
+  appConfig.flyingDuration = parseInt(document.getElementById('edit-flying-duration').value, 10) || 12;
+  appConfig.letterGreeting = document.getElementById('edit-letter-greeting').value;
+  appConfig.letterBody = document.getElementById('edit-letter-body').value;
+  appConfig.letterSignature = document.getElementById('edit-letter-signature').value;
+  syncMemoryPhotosWithUserUploads();
+  saveToLocalStorage();
 
-if (btnDl1) btnDl1.addEventListener('click', executeExportIndexHtml);
-if (btnDlFooter) btnDlFooter.addEventListener('click', executeExportIndexHtml);
-if (btnDlHeader) btnDlHeader.addEventListener('click', executeExportIndexHtml);
-
-// Nút tải file script.js đã kèm cấu hình ảnh dành cho bạn nào muốn giữ cấu trúc nhiều file
-const btnDownloadScript = document.getElementById('btn-download-script-js');
-if (btnDownloadScript) {
-  btnDownloadScript.addEventListener('click', async () => {
-    appConfig.bouquetQuote = document.getElementById('edit-bouquet-quote').value;
-    const rawMsgs = document.getElementById('edit-flying-messages').value.split('\n');
-    appConfig.flyingMessages = rawMsgs.map(s => s.trim()).filter(s => s.length > 0);
-    appConfig.flyingDuration = parseInt(document.getElementById('edit-flying-duration').value, 10) || 12;
-    appConfig.letterGreeting = document.getElementById('edit-letter-greeting').value;
-    appConfig.letterBody = document.getElementById('edit-letter-body').value;
-    appConfig.letterSignature = document.getElementById('edit-letter-signature').value;
-    syncMemoryPhotosWithUserUploads();
-
-    try {
-      const jsResponse = await fetch('script.js');
-      let jsText = await jsResponse.text();
-      const serializedConfig = JSON.stringify(appConfig, null, 2);
-      jsText = jsText.replace(/const DEFAULT_CONFIG = \{[\s\S]*?\n\};/, `const DEFAULT_CONFIG = ${serializedConfig};`);
-
-      const blob = new Blob([jsText], { type: 'application/javascript;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'script.js';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      alert('🎉 Đã tải file [script.js] đã chứa sẵn toàn bộ ảnh của bạn!\n\nBạn chỉ cần copy đè file script.js này vào thư mục dự án flower-gift-web, rồi gõ git push lên GitHub là Vercel sẽ nhận ngay!');
-    } catch (e) {
-      alert('Không thể tạo file script.js: ' + e.message);
-    }
-  });
+  const fileContent = 'const USER_SAVED_CONFIG = ' + JSON.stringify(appConfig, null, 2) + ';\n';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(fileContent).then(() => {
+      alert('📋 Đã sao chép toàn bộ mã cấu hình kèm ảnh vào bộ nhớ tạm!\nBạn có thể dán (Ctrl+V) vào file config.js trong thư mục dự án.');
+    }).catch(() => fallbackCopy(fileContent));
+  } else {
+    fallbackCopy(fileContent);
+  }
 }
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  alert('📋 Đã sao chép toàn bộ mã cấu hình kèm ảnh vào bộ nhớ tạm!\nBạn có thể dán (Ctrl+V) vào file config.js trong thư mục dự án.');
+}
+
+// Gắn sự kiện cho các nút tải config (hỗ trợ cả ID mới và ID cũ)
+const btnDlConfig = document.getElementById('btn-download-config');
+const btnDlConfigFooter = document.getElementById('btn-download-config-footer');
+const btnDlConfigHeader = document.getElementById('btn-download-config-header');
+const btnCopyConfig = document.getElementById('btn-copy-config');
+
+const btnOldDlHtml = document.getElementById('btn-download-html');
+const btnOldDlFooter = document.getElementById('btn-download-html-footer');
+const btnOldDlHeader = document.getElementById('btn-download-html-header');
+const btnOldDlScript = document.getElementById('btn-download-script-js');
+
+[btnDlConfig, btnDlConfigFooter, btnDlConfigHeader, btnOldDlHtml, btnOldDlFooter, btnOldDlHeader, btnOldDlScript].forEach(btn => {
+  if (btn) btn.addEventListener('click', executeDownloadConfigFile);
+});
+
+if (btnCopyConfig) btnCopyConfig.addEventListener('click', executeCopyConfig);

@@ -487,8 +487,8 @@
           <button id="btn-guide-modal-trigger" class="guide-trigger-btn" title="Xem cách tải lên mạng không cần server">
             <span>🚀</span> Cách up web
           </button>
-          <button id="btn-download-html-header" class="guide-trigger-btn download-header-btn" title="Tải file index.html đã nhúng sẵn toàn bộ ảnh">
-            <span>📥</span> Tải File Web (index.html)
+          <button id="btn-download-config-header" class="guide-trigger-btn download-header-btn" title="Tải file config.js chứa toàn bộ ảnh để up GitHub/Vercel">
+            <span>📥</span> Tải File config.js
           </button>
         </div>
         <button id="btn-close-editor" class="close-modal-btn">✕</button>
@@ -711,29 +711,30 @@
           <div class="export-options">
             <div class="export-card primary">
               <div class="export-card-header">
-                <span class="badge">Khuyên Dùng Cho Vercel</span>
-                <h5>1. Tải file <code>index.html</code> (Đã nhúng sẵn 100% ảnh & lời chúc)</h5>
+                <span class="badge">Khuyên Dùng Cho GitHub & Vercel</span>
+                <h5>1. Tải file <code>config.js</code> (Đã chứa toàn bộ ảnh & lời chúc của bạn)</h5>
               </div>
-              <p>Trình duyệt sẽ xuất 1 file <code>index.html</code> tự động chứa toàn bộ ảnh bạn đã tải và lời chúc. Bạn chỉ cần copy đè file này vào thư mục dự án là git push lên GitHub/Vercel được ngay.</p>
-              <button id="btn-download-html" class="action-btn glow full-width">
-                <span>📥</span> Tải File index.html Hoàn Chỉnh Về Máy
+              <p>Bấm nút bên dưới để tải file <code>config.js</code> về máy. Bạn chỉ cần thả file này vào thư mục dự án <code>flower-gift-web</code> rồi chạy <code>git push</code> là Vercel sẽ tự động hiện toàn bộ ảnh của bạn!</p>
+              <button id="btn-download-config" class="action-btn download-btn-highlight full-width">
+                <span>📥</span> Tải File config.js (Đã Chứa 100% Ảnh & Lời Chúc)
               </button>
             </div>
 
             <div class="export-card">
               <div class="export-card-header">
-                <span class="badge">Cách 2</span>
-                <h5>2. Tải file <code>script.js</code> (Đã nhúng sẵn cấu hình ảnh)</h5>
+                <span class="badge">Dự phòng</span>
+                <h5>2. Sao chép trực tiếp mã cấu hình</h5>
               </div>
-              <p>Nếu bạn muốn giữ nguyên cấu trúc nhiều file (HTML, CSS, JS), hãy tải file này và copy đè vào file <code>script.js</code> trong thư mục dự án.</p>
-              <button id="btn-download-script-js" class="action-btn outline full-width">
-                <span>📄</span> Tải File script.js Đã Chứa Ảnh
+              <p>Nếu bạn không muốn tải file, bấm nút này để copy toàn bộ mã cấu hình đã kèm ảnh vào Clipboard (sau đó gửi cho trợ lý hoặc dán vào file config.js).</p>
+              <button id="btn-copy-config" class="action-btn outline full-width">
+                <span>📋</span> Sao Chép Mã Cấu Hình (Copy Clipboard)
               </button>
             </div>
 
             <div class="export-card">
               <h5>🐙 Hướng dẫn lệnh Git để đẩy lên GitHub & Vercel:</h5>
               <ol class="step-guide">
+                <li>Tải file <code>config.js</code> ở trên và bỏ vào thư mục <code>flower-gift-web</code>.</li>
                 <li>Vào GitHub tạo 1 repository mới (ví dụ: <code>tang-no-spiderman</code>).</li>
                 <li>Mở terminal tại thư mục này và chạy các lệnh:
                   <pre style="background: #111; color: #4ade80; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 13px; margin: 8px 0; overflow-x: auto;">git add .
@@ -749,8 +750,8 @@ git push -u origin main</pre>
       </div>
 
       <div class="editor-footer">
-        <button id="btn-download-html-footer" class="action-btn download-btn-highlight" title="Tải file index.html đã nhúng sẵn 100% ảnh để up GitHub/Vercel">
-          <span>📥</span> Tải File Web (index.html)
+        <button id="btn-download-config-footer" class="action-btn download-btn-highlight" title="Tải file config.js đã chứa 100% ảnh của bạn để up GitHub/Vercel">
+          <span>📥</span> Tải File config.js (Lưu ảnh)
         </button>
         <button id="btn-save-draft" class="action-btn glow">
           <span>💾</span> Lưu vào trình duyệt này
@@ -804,6 +805,8 @@ git push -u origin main</pre>
   <!-- Audio Player ẩn -->
   <audio id="bg-audio" preload="auto" loop></audio>
 
+  <!-- Cấu hình tùy chỉnh của người dùng (chứa ảnh & lời chúc) -->
+  <script src="config.js"></script>
   <!-- Script ứng dụng -->
   <script src="script.js"></script>
 </body>
