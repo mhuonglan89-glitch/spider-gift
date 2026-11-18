@@ -1,0 +1,1993 @@
+/* ==========================================================
+   TỔNG QUAN STYLING: ROMANTIC GIFT WEB
+   Hỗ trợ hoàn hảo: Mobile (iOS/Android) & Laptop/Desktop
+   ========================================================== */
+
+:root {
+  --bg-dark: #08070d;
+  --pink-primary: #f27289;
+  --pink-light: #fce4ec;
+  --pink-glow: #e84a6f;
+  --pink-neon: #ff2a85;
+  --gold-accent: #ffd166;
+  --paper-cream: #ffffff;
+  --text-dark: #2b1a23;
+  --text-light: #fcf4f7;
+  --font-serif: 'Playfair Display', serif;
+  --font-cursive: 'Dancing Script', cursive;
+  --font-handwrite: 'Patrick Hand', 'Dancing Script', cursive;
+  --font-sans: 'Quicksand', 'Comfortaa', -apple-system, BlinkMacSystemFont, sans-serif;
+  --shadow-glow: 0 4px 18px rgba(242, 114, 137, 0.3);
+  --shadow-neon: 0 0 10px rgba(255, 117, 140, 0.9), 0 0 20px rgba(255, 42, 133, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-dark);
+  font-family: var(--font-sans);
+  color: var(--text-light);
+}
+
+/* Canvas bụi sao toàn màn hình */
+#ambient-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================================
+   THANH ĐIỀU HƯỚNG TRÊN CÙNG (TOP NAV)
+   ========================================================== */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.nav-left, .nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: auto;
+}
+
+.nav-btn {
+  background: rgba(30, 20, 50, 0.45);
+  border: 1px solid rgba(255, 182, 193, 0.2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.nav-btn:hover {
+  background: rgba(255, 117, 140, 0.25);
+  border-color: var(--pink-primary);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 117, 140, 0.4);
+}
+
+.nav-btn.subtle-btn {
+  background: rgba(20, 15, 35, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.7);
+  opacity: 0.65;
+}
+
+.nav-btn.subtle-btn:hover {
+  opacity: 1;
+  background: rgba(255, 117, 140, 0.3);
+  border-color: rgba(255, 182, 193, 0.5);
+  color: #fff;
+  transform: scale(1.08);
+}
+
+.nav-btn.glow-btn {
+  background: linear-gradient(135deg, rgba(255, 117, 140, 0.4), rgba(255, 77, 109, 0.2));
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 15px rgba(255, 117, 140, 0.35);
+}
+
+.nav-btn.icon-only {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* Hiệu ứng sóng âm thanh khi nhạc bật */
+.music-btn {
+  position: relative;
+}
+
+.music-wave {
+  display: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 14px;
+  margin-right: 4px;
+}
+
+.music-wave span {
+  width: 3px;
+  background: var(--pink-primary);
+  border-radius: 2px;
+  animation: soundBars 0.8s ease-in-out infinite alternate;
+}
+
+.music-wave span:nth-child(1) { height: 6px; animation-delay: 0.1s; }
+.music-wave span:nth-child(2) { height: 14px; animation-delay: 0.3s; }
+.music-wave span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+
+.music-btn.playing .music-wave {
+  display: inline-flex;
+}
+
+.music-btn.playing {
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 15px rgba(255, 77, 109, 0.5);
+}
+
+@keyframes soundBars {
+  0% { transform: scaleY(0.4); }
+  100% { transform: scaleY(1); }
+}
+
+/* ==========================================================
+   APP VIEWPORT & KHUNG CHỨA (RESPONSIVE CHUẨN)
+   Trên Laptop: Hiển thị như 1 chiếc điện thoại sang trọng ở giữa
+   hoặc toàn màn hình khi người dùng chọn.
+   Trên Điện thoại: Full màn hình 100%.
+   ========================================================== */
+.app-viewport {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.screen-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 440px; /* Khung chuẩn iPhone Pro Max */
+  max-height: 920px;
+  overflow: hidden;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Chế độ Desktop Mockup khi xem trên máy tính */
+@media (min-width: 768px) {
+  body.view-phone-mockup .screen-wrapper {
+    height: 90vh;
+    border-radius: 46px;
+    border: 4px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 20px rgba(242, 114, 137, 0.15);
+    background: #0d0c14;
+  }
+
+  body.view-fullscreen .screen-wrapper {
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* Các màn hình / phân cảnh (Scenes) */
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform: scale(0.96);
+  z-index: 10;
+}
+
+.scene.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+  transform: scale(1);
+  z-index: 20;
+}
+
+/* ==========================================================
+   SCENE 1: BÓ HOA TÌNH YÊU (BOUQUET)
+   ========================================================== */
+.bouquet-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 60px 16px 30px;
+  overflow: hidden;
+}
+
+.bouquet-aura {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(255, 220, 230, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.bouquet-container {
+  position: relative;
+  width: 330px;
+  height: 440px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  animation: bouquetFloat 5s ease-in-out infinite alternate;
+}
+
+@keyframes bouquetFloat {
+  0% { transform: translateY(0) rotate(-0.5deg); }
+  100% { transform: translateY(-8px) rotate(0.8deg); }
+}
+
+/* Cụm 6 bông hoa chứa ảnh */
+.flower-cluster {
+  position: absolute;
+  top: 15px;
+  width: 300px;
+  height: 270px;
+  z-index: 5;
+}
+
+/* Các bông hoa ảnh với viền cánh hoa phát sáng */
+.flower-slot {
+  position: absolute;
+  width: 78px;
+  height: 78px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+/* Vị trí 6 bông hoa mô phỏng ảnh 1 chuẩn đét */
+.flower-slot.slot-1 { top: 12px; left: 22px; }     /* Trên trái */
+.flower-slot.slot-2 { top: -2px; left: 110px; }   /* Đỉnh giữa */
+.flower-slot.slot-3 { top: 14px; left: 198px; }   /* Trên phải */
+.flower-slot.slot-4 { top: 88px; left: 8px; }     /* Giữa trái */
+.flower-slot.slot-5 { top: 92px; left: 110px; width: 84px; height: 84px; z-index: 6; } /* Tâm giữa */
+.flower-slot.slot-6 { top: 88px; left: 212px; }   /* Giữa phải */
+
+.flower-photo-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  background: #fce4ec;
+}
+
+.flower-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.flower-petals-glow {
+  position: absolute;
+  width: 108%;
+  height: 108%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 215, 225, 0.4);
+  pointer-events: none;
+}
+
+/* Cành hoa baby & lá trang trí mềm mại (thay thế emoji) */
+.deco-botanical {
+  position: absolute;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+  z-index: 7;
+}
+.deco-botanical-1 { top: 0px; left: 85px; }
+.deco-botanical-2 { top: 0px; right: 85px; }
+.deco-botanical-3 { top: 76px; left: 88px; }
+
+/* Giấy gói hoa và nơ ruy băng */
+.bouquet-wrap-wrapper {
+  position: absolute;
+  top: 105px;
+  width: 320px;
+  height: 310px;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.bouquet-wrap-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 15px 25px rgba(0, 0, 0, 0.5));
+}
+
+/* Lời bài hát dưới bó hoa */
+.lyrics-quote {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 0 10px rgba(255, 182, 193, 0.8), 0 0 20px rgba(255, 77, 109, 0.5);
+  text-align: center;
+  margin-top: -10px;
+  z-index: 10;
+}
+
+/* Nút ấn giữ lâu (Hold Area) */
+.hold-action-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  z-index: 20;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+
+.hold-ring-container {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hold-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.hold-bg-circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 4;
+}
+
+.hold-progress-circle {
+  fill: none;
+  stroke: url(#holdGrad);
+  stroke: var(--pink-primary);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  stroke-dasharray: 264;
+  stroke-dashoffset: 264;
+  transition: stroke-dashoffset 0.05s linear;
+  filter: drop-shadow(0 0 6px var(--pink-neon));
+}
+
+.hold-inner-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff758c 0%, #ff4d6d 50%, #c9184a 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 20px rgba(255, 77, 109, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hold-icon {
+  font-size: 24px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: heartBeat 1.8s infinite;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.18); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.18); }
+  70% { transform: scale(1); }
+}
+
+.hold-action-area:active .hold-inner-btn,
+.hold-action-area.holding .hold-inner-btn {
+  transform: scale(0.92);
+  box-shadow: 0 0 35px rgba(255, 42, 133, 0.9);
+}
+
+.hold-hint {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 230, 240, 0.85);
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: color 0.3s ease;
+}
+
+/* ==========================================================
+   SCENE 2: GIAO DIỆN CHỮ BAY ĐỘNG & ẢNH KỶ NIỆM (FLYING)
+   Mô phỏng chân thực ảnh 2 và 3
+   ========================================================== */
+.scene-flying {
+  background: #08070d;
+  perspective: 900px;
+  overflow: hidden;
+}
+
+#flying-particles-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.flying-elements-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Các câu chữ neon phát sáng bay */
+.flying-neon-text {
+  position: absolute;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 
+    0 0 6px rgba(255, 255, 255, 0.9),
+    0 0 14px #ff758c,
+    0 0 24px #ff2a85;
+  animation: flyUpwards 8s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+  opacity: 0;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+
+/* Các cỡ chữ ngẫu nhiên */
+.flying-neon-text.size-sm { font-size: 14px; opacity: 0.85; filter: blur(0.3px); }
+.flying-neon-text.size-md { font-size: 18px; }
+.flying-neon-text.size-lg { font-size: 23px; font-weight: 800; }
+.flying-neon-text.size-xl { 
+  font-size: 28px; 
+  font-weight: 900; 
+  color: #ffccd5;
+  text-shadow: 0 0 12px #fff, 0 0 25px #ff2a85, 0 0 50px #ff007f;
+}
+
+/* Ảnh kỉ niệm trôi bồng bềnh */
+.flying-memory-card {
+  position: absolute;
+  width: 95px;
+  height: 115px;
+  padding: 6px 6px 18px 6px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65), 0 0 15px rgba(226, 54, 54, 0.35);
+  animation: floatPolaroid 9s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: center center;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.flying-memory-card img {
+  width: 100%;
+  height: 88px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+  background: #f0f0f0;
+}
+
+/* Trái tim phát sáng bay */
+.flying-glow-heart {
+  position: absolute;
+  color: #ff4d6d;
+  font-size: 22px;
+  filter: drop-shadow(0 0 12px #ff2a85);
+  animation: flyHeart 6s cubic-bezier(0.2, 0.6, 0.3, 1) forwards;
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes flyUpwards {
+  0% {
+    transform: translateY(110vh) scale(0.6) translateZ(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1.15) translateZ(100px);
+    opacity: 0;
+  }
+}
+
+@keyframes floatPolaroid {
+  0% {
+    transform: translateY(110vh) scale(0.5) rotate(var(--rot, 0deg));
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1.1) rotate(calc(var(--rot, 0deg) * -1));
+    opacity: 0;
+  }
+}
+
+@keyframes flyHeart {
+  0% {
+    transform: translateY(105vh) scale(0.5);
+    opacity: 0;
+  }
+  20% { opacity: 1; }
+  80% { opacity: 1; }
+  100% {
+    transform: translateY(-10vh) scale(1.4);
+    opacity: 0;
+  }
+}
+
+/* Thanh thời gian hiệu ứng bay */
+.flying-timeline-bar {
+  position: absolute;
+  top: 60px;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+  z-index: 10;
+}
+
+.timeline-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff758c, #ff2a85);
+  box-shadow: 0 0 10px #ff2a85;
+  transition: width 0.1s linear;
+}
+
+.flying-bottom-quote {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #fff;
+  text-shadow: 0 0 10px #ff758c, 0 0 20px #ff2a85;
+  z-index: 10;
+  text-align: center;
+  width: 90%;
+}
+
+.skip-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.skip-btn:hover {
+  background: rgba(255, 117, 140, 0.3);
+  border-color: var(--pink-primary);
+}
+
+/* ==========================================================
+   SCENE 3: PHONG BÌ SPIDER-MAN BÁ KHÍ (ENVELOPE)
+   Phong cách bưu kiện Marvel Special Airmail chuẩn xịn
+   ========================================================== */
+.scene-envelope {
+  background: #08070d;
+}
+
+.envelope-scene-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  width: 100%;
+  padding: 20px;
+}
+
+.spider-envelope-wrapper {
+  position: relative;
+  width: min(92vw, 340px);
+  height: 225px;
+  perspective: 1200px;
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spider-envelope-wrapper:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+.spider-envelope-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #141722; /* Màu than chì matte sang trọng, không còn loang loang AI */
+  border-radius: 16px;
+  box-shadow: 
+    0 18px 42px rgba(0, 0, 0, 0.75),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #b71c1c; /* Đường viền đỏ sắc nét chuẩn mực */
+}
+
+/* Viền chỉ khâu / tem Airmail */
+.airmail-edge-stitch {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+/* Tem bưu chính Marvel NYC & Dấu hủy bưu điện */
+.envelope-postage-stamp {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 3;
+}
+
+.postage-marvel-badge {
+  width: 52px;
+  height: auto;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.4);
+}
+
+.postmark-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.2px dashed rgba(255, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transform: rotate(-12deg);
+}
+
+.postmark-circle span {
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.2;
+}
+
+.postmark-waves {
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+/* Mạng nhện vẽ tay ở góc phong bì */
+.spider-web-corner {
+  position: absolute;
+  pointer-events: none;
+}
+.spider-web-corner.top-left { top: 0; left: 0; }
+.spider-web-corner.bottom-right { bottom: 0; right: 0; }
+
+.spider-envelope-center {
+  text-align: center;
+  z-index: 2;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.spider-top-tag {
+  font-family: var(--font-sans);
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  color: #94a3b8; /* Bỏ viền sáng loang lổ cyan, đổi sang màu xám kỹ thuật sắc nét */
+  display: block;
+  margin-bottom: 2px;
+  text-shadow: none;
+}
+
+.spider-envelope-title {
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 28px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 2px;
+  line-height: 1.1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7); /* Đổ bóng vật lý tự nhiên, bỏ quầng đỏ nhòe */
+}
+
+.spider-recipient-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #1c202d;
+  border: 1px solid #b71c1c;
+  border-radius: 12px;
+  padding: 3px 12px;
+  margin-top: 6px;
+}
+
+.spider-recipient-badge .badge-dot {
+  color: #e62429;
+  font-size: 9px;
+  animation: spiderPulse 1.5s infinite;
+}
+
+.spider-recipient-badge .badge-text {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #ffffff;
+}
+
+/* Sticker Mặt Nạ Spider-Man Dập Nổi 3D (Wax Seal Sticker) */
+.spider-seal-sticker {
+  position: absolute;
+  bottom: 14px;
+  width: 72px;
+  height: 86px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 8;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.spidey-mask-svg-wrap {
+  width: 58px;
+  height: 70px;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.65));
+  transition: transform 0.25s ease;
+}
+
+.spidey-mask-sticker-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.spider-envelope-wrapper:hover .spider-seal-sticker {
+  transform: scale(1.08) translateY(-2px);
+}
+
+.sticker-peel-pill {
+  font-size: 9px;
+  font-weight: 800;
+  color: #ffffff;
+  background: #b71c1c;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  margin-top: -6px;
+  white-space: nowrap;
+  animation: bounceHint 2s infinite;
+}
+
+/* Nắp phong bì mở 3D */
+.spider-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: #1a1d29; /* Màu than chì matte đồng bộ */
+  border-bottom: 2px solid #b71c1c;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  transform-origin: top center;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 5;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.spider-envelope-wrapper.opening .spider-flap {
+  transform: rotateX(180deg);
+  z-index: 1;
+}
+
+.spider-envelope-wrapper.opening .spider-seal-sticker {
+  transform: scale(0) rotate(140deg);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+/* Dòng chữ dưới phong bì Spider-Man */
+.envelope-footer-quote {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #cbd5e1;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  text-align: center;
+  max-width: 90%;
+}
+
+.spider-tap-hint {
+  font-size: 13.5px;
+  color: #f1f5f9;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+  animation: bounceHint 2s infinite;
+}
+
+
+/* ==========================================================
+   SCENE 4: KHUNG QUÀ TẶNG THỦ CÔNG SPIDER-MAN (HANDMADE GIFT FRAME)
+   Tái hiện chính xác khung ảnh kỷ niệm thật từ Ảnh số 2 & Marvel Comic
+   ========================================================== */
+.scene-letter {
+  background: #08070d;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: block;
+}
+
+.letter-scroll-area {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 50px 14px 45px;
+}
+
+/* Khung Tranh Gỗ Đen Cao Cấp Có Dây Đèn Bao Quanh (Ảnh số 2) */
+.spidey-gift-frame-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: #14151b; /* Màu gỗ đen sang trọng */
+  border: 11px solid #101117;
+  border-radius: 18px;
+  box-shadow: 
+    0 25px 65px rgba(0, 0, 0, 0.9),
+    0 0 0 1.5px rgba(255, 255, 255, 0.1),
+    inset 0 0 16px rgba(0, 0, 0, 0.8);
+  padding: 9px;
+  animation: letterSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Dây đèn Fairy lights nhấp nháy lung linh viền quanh khung tranh */
+.frame-fairy-lights {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.frame-fairy-lights .bulb {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff3bf;
+  box-shadow: 0 0 8px #ffb703, 0 0 16px #fb8500;
+  animation: fairyFlicker 2.2s infinite ease-in-out;
+}
+
+.frame-fairy-lights .bulb:nth-child(even) {
+  animation-delay: 1.1s;
+  background: #ffe8cc;
+  box-shadow: 0 0 9px #ffd166, 0 0 18px #ff9f1c;
+}
+
+/* Tọa độ các bóng đèn đom đóm quanh khung */
+.frame-fairy-lights .b1 { top: 4px; left: 15%; }
+.frame-fairy-lights .b2 { top: 4px; left: 45%; }
+.frame-fairy-lights .b3 { top: 4px; left: 75%; }
+.frame-fairy-lights .b4 { top: 22%; right: 4px; }
+.frame-fairy-lights .b5 { top: 50%; right: 4px; }
+.frame-fairy-lights .b6 { top: 78%; right: 4px; }
+.frame-fairy-lights .b7 { bottom: 4px; right: 20%; }
+.frame-fairy-lights .b8 { bottom: 4px; right: 50%; }
+.frame-fairy-lights .b9 { bottom: 4px; left: 20%; }
+.frame-fairy-lights .b10 { top: 78%; left: 4px; }
+.frame-fairy-lights .b11 { top: 50%; left: 4px; }
+.frame-fairy-lights .b12 { top: 22%; left: 4px; }
+.frame-fairy-lights .b13 { top: 4px; left: 30%; }
+.frame-fairy-lights .b14 { bottom: 4px; right: 35%; }
+
+@keyframes fairyFlicker {
+  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.18); }
+}
+
+/* Nền giấy vẽ truyện tranh có lưới ô tập kẻ mờ (Comic Grid Mat) */
+.frame-mat-inner {
+  position: relative;
+  width: 100%;
+  background: #fbf9f4; /* Màu giấy vẽ thủ công ấm áp */
+  background-image: 
+    linear-gradient(rgba(220, 214, 200, 0.45) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(220, 214, 200, 0.45) 1px, transparent 1px);
+  background-size: 18px 18px;
+  border-radius: 10px;
+  padding: 24px 14px 28px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Dây cờ đuôi nheo mini "FOR NO ♡" ở đầu tranh (Ảnh 2) */
+.frame-top-garland {
+  position: relative;
+  width: 100%;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.garland-string {
+  position: absolute;
+  top: 10px;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  background: #8d7b68;
+  opacity: 0.5;
+}
+
+.garland-flags {
+  position: relative;
+  display: inline-flex;
+  gap: 5px;
+  z-index: 2;
+}
+
+.garland-flags .g-flag {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 20px;
+  height: 24px;
+  background: #e62429;
+  color: #fff;
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 11px;
+  font-weight: 900;
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 50% 100%, 0 80%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+}
+
+.garland-flags .g-flag.spidey-icon {
+  background: #111;
+  font-size: 12px;
+}
+
+.garland-flags .g-flag.heart-icon {
+  background: #ff4d6d;
+  font-size: 13px;
+}
+
+/* Spider-Man đu tơ ở góc trên phải (Ảnh 1) */
+.sticker-swinging-spidey {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  width: 125px;
+  z-index: 6;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.35));
+}
+
+.spidey-swing-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform: rotate(-3deg);
+}
+
+/* Khu vực ảnh kỷ niệm (Photos Showcase): Dải phim & Ảnh đôi Polaroid trên cùng */
+.frame-photos-showcase {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 12px;
+  align-items: center;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 3;
+}
+
+/* DẢI PHIM PHOTOBOOTH 35MM (ẢNH SỐ 2) */
+.filmstrip-showcase-item {
+  position: relative;
+}
+
+.filmstrip-washi-tape {
+  position: absolute;
+  top: -8px;
+  left: 20%;
+  width: 55px;
+  height: 15px;
+  background: rgba(230, 36, 41, 0.7);
+  transform: rotate(-5deg);
+  z-index: 5;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.photobooth-filmstrip {
+  background: #18181b;
+  border-radius: 4px;
+  padding: 8px 4px 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transform: rotate(-1deg);
+}
+
+.film-sprockets {
+  position: absolute;
+  top: 6px;
+  bottom: 22px;
+  width: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.film-sprockets.left { left: 2px; }
+.film-sprockets.right { right: 2px; }
+
+.film-sprockets span {
+  width: 5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 1px;
+  display: block;
+  opacity: 0.85;
+}
+
+.film-frames-track {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 0 8px;
+}
+
+.film-cell {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 0.95;
+  background: #27272a;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.film-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.film-cell-num {
+  position: absolute;
+  bottom: 1px;
+  right: 2px;
+  font-size: 7px;
+  font-weight: 800;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+}
+
+.film-footer-brand {
+  margin-top: 5px;
+  padding: 0 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  font-weight: 800;
+  color: #a1a1aa;
+  letter-spacing: 0.5px;
+}
+
+/* KHUNG ẢNH ĐÔI POLAROID */
+.couple-polaroid-showcase-item {
+  position: relative;
+}
+
+.comic-couple-polaroid {
+  position: relative;
+  background: #ffffff;
+  padding: 6px 6px 10px 6px;
+  border-radius: 6px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  transform: rotate(1.5deg);
+  border: 1px solid #e4e4e7;
+}
+
+.couple-tape-accent {
+  position: absolute;
+  top: -7px;
+  right: 18%;
+  width: 45px;
+  height: 14px;
+  background: rgba(0, 229, 255, 0.7);
+  transform: rotate(5deg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.couple-photo-box {
+  width: 100%;
+  height: 135px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: #18181b;
+}
+
+.couple-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.couple-comic-caption {
+  margin-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.couple-comic-caption .badge-tag {
+  font-size: 8.5px;
+  font-weight: 800;
+  color: #e62429;
+  letter-spacing: 1px;
+}
+
+.couple-comic-caption .couple-date {
+  font-size: 9px;
+  font-weight: 700;
+  color: #71717a;
+}
+
+/* NỘI DUNG THƯ: RỘNG TOÀN BỘ BỀ NGANG KHUNG (FULL WIDTH) */
+.comic-speech-bubble.full-width-bubble {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 2.8px solid #111111;
+  border-radius: 16px;
+  padding: 18px 20px 22px;
+  box-shadow: 4px 5px 0px #111111;
+  color: #18181b;
+  margin-top: 8px;
+  margin-bottom: 6px;
+}
+
+.bubble-header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.protocol-badge {
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #e62429;
+  text-transform: uppercase;
+}
+
+.thwip-badge {
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 9.5px;
+  font-weight: 900;
+  color: #0284c7;
+  letter-spacing: 1px;
+  transform: rotate(-3deg);
+}
+
+.bubble-greeting {
+  font-family: 'Patrick Hand', var(--font-handwrite);
+  font-size: 26px;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 10px;
+}
+
+.bubble-body {
+  font-family: 'Patrick Hand', var(--font-handwrite);
+  font-size: 21px;
+  line-height: 1.68;
+  color: #1f2937;
+  font-weight: 400;
+  margin-bottom: 14px;
+  word-break: break-word;
+}
+
+.bubble-signature {
+  font-family: 'Dancing Script', var(--font-cursive);
+  font-size: 24px;
+  font-weight: 700;
+  color: #e62429;
+  text-align: right;
+  margin-top: 6px;
+}
+
+/* Mũi nhọn bong bóng thoại trỏ lên trên */
+.comic-bubble-tail {
+  position: absolute;
+  top: -14px;
+  left: 36px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 14px 10px;
+  border-color: transparent transparent #ffffff transparent;
+  filter: drop-shadow(0px -2px 0px #111111);
+}
+
+/* Nút bấm Spider-Man */
+.spider-btn {
+  background: linear-gradient(135deg, #e62429 0%, #b70916 100%);
+  box-shadow: 0 6px 20px rgba(230, 36, 41, 0.6);
+  border: none;
+  color: #ffffff;
+}
+
+.spider-btn:hover {
+  box-shadow: 0 8px 25px rgba(230, 36, 41, 0.85);
+  transform: translateY(-2px);
+}
+
+.spider-outline {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(230, 36, 41, 0.5);
+  color: #ffffff;
+}
+
+.spider-outline:hover {
+  background: rgba(230, 36, 41, 0.2);
+}
+
+/* Nút hành động cuối thư */
+.letter-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+  z-index: 10;
+}
+
+.letter-action-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+/* Ô tải ảnh dải phim trong modal */
+.filmstrip-edit-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.film-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-box.mini {
+  width: 60px;
+  height: 75px;
+  border-radius: 6px;
+  background: #18181b;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.preview-box.mini img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.custom-file-btn.mini {
+  padding: 4px 8px;
+  font-size: 10px;
+  border-radius: 12px;
+}
+
+/* Nút hành động cuối thư */
+.letter-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+  z-index: 10;
+}
+
+.letter-action-btn {
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.letter-action-btn.glow {
+  background: linear-gradient(135deg, #ff758c 0%, #ff4d6d 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(255, 77, 109, 0.5);
+}
+
+.letter-action-btn.glow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 77, 109, 0.7);
+}
+
+.letter-action-btn.outline {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+
+.letter-action-btn.outline:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================
+   MODAL CHỈNH SỬA & HƯỚNG DẪN (EDITOR & GUIDE DRAWER)
+   ========================================================== */
+.editor-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 3, 10, 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 16px;
+}
+
+.editor-modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.editor-modal-panel {
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  background: #181124;
+  border: 1px solid rgba(255, 182, 193, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(255, 117, 140, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(20px) scale(0.96);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.editor-modal-backdrop.open .editor-modal-panel {
+  transform: translateY(0) scale(1);
+}
+
+.editor-header {
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.editor-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.editor-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.guide-trigger-btn {
+  background: rgba(255, 209, 102, 0.15);
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  color: #ffd166;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guide-trigger-btn:hover {
+  background: rgba(255, 209, 102, 0.3);
+  transform: translateY(-1px);
+}
+
+.close-modal-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.close-modal-btn:hover {
+  background: rgba(255, 77, 109, 0.6);
+}
+
+/* Tabs */
+.editor-tabs {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 18px 0;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  scrollbar-width: none;
+}
+.editor-tabs::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2.5px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  color: #fff;
+}
+
+.tab-btn.active {
+  color: var(--pink-primary);
+  border-bottom-color: var(--pink-primary);
+}
+
+.tab-btn.highlight-tab {
+  color: #ffd166;
+}
+.tab-btn.highlight-tab.active {
+  border-bottom-color: #ffd166;
+}
+
+/* Body Modal */
+.editor-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.tab-content {
+  display: none;
+}
+.tab-content.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-intro {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* Bouquet Grid Uploader */
+.bouquet-uploader-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 480px) {
+  .bouquet-uploader-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.photo-upload-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.slot-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pink-light);
+  text-align: center;
+}
+
+.preview-box {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #2a1d3b;
+  border: 2px solid var(--pink-primary);
+}
+
+.preview-box.square {
+  border-radius: 12px;
+  width: 90px;
+  height: 90px;
+}
+
+.preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.custom-file-btn {
+  background: rgba(255, 117, 140, 0.2);
+  border: 1px solid var(--pink-primary);
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.custom-file-btn:hover {
+  background: var(--pink-primary);
+}
+
+.custom-file-btn input[type="file"] {
+  display: none;
+}
+
+.custom-file-btn.full-width {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 13px;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group.hidden {
+  display: none;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.form-input, .form-textarea, .form-select {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--pink-primary);
+  box-shadow: 0 0 10px rgba(255, 117, 140, 0.3);
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.form-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.form-select option {
+  background: #1a1228;
+  color: #fff;
+}
+
+.helper-text {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+}
+
+.couple-photo-edit-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 5px;
+}
+
+.memory-photos-preview {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+
+
+
+.audio-test-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* Export Cards */
+.export-banner {
+  background: linear-gradient(135deg, rgba(255, 117, 140, 0.2), rgba(255, 209, 102, 0.15));
+  border: 1px solid rgba(255, 182, 193, 0.3);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+.export-banner h4 {
+  color: #ffd166;
+  font-size: 14.5px;
+  margin-bottom: 4px;
+}
+.export-banner p {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.export-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.export-card.primary {
+  border-color: var(--pink-primary);
+  background: rgba(255, 117, 140, 0.08);
+}
+
+.export-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.badge {
+  background: var(--pink-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+}
+
+.export-card h5 {
+  font-size: 14px;
+  color: #fff;
+}
+
+.export-card p {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.step-guide {
+  padding-left: 20px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}
+.step-guide a {
+  color: var(--pink-primary);
+  text-decoration: underline;
+}
+
+/* Footer Modal */
+.editor-footer {
+  padding: 14px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.action-btn {
+  padding: 9px 18px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.action-btn.glow {
+  background: linear-gradient(135deg, #ff758c 0%, #ff4d6d 100%);
+  border: none;
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+}
+.action-btn.glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 77, 109, 0.6);
+}
+
+.action-btn.outline {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+.action-btn.outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.action-btn.small {
+  padding: 5px 12px;
+  font-size: 12px;
+}
+
+.action-btn.full-width {
+  width: 100%;
+  justify-content: center;
+  padding: 12px;
+  font-size: 14px;
+}
+
+/* Guide Panel */
+.guide-panel {
+  max-width: 600px;
+}
+
+.guide-body {
+  padding: 20px 24px;
+  overflow-y: auto;
+  max-height: 75vh;
+}
+
+.guide-method {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.guide-method h4 {
+  color: #ffd166;
+  font-size: 14.5px;
+  margin-bottom: 10px;
+}
+
+.guide-method ul {
+  padding-left: 20px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+}
+
+.guide-method a {
+  color: var(--pink-primary);
+  text-decoration: underline;
+}
+
+/* Hạt chạm / Touch Ripple */
+.touch-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 117, 140, 0.8) 0%, rgba(255, 42, 133, 0.4) 50%, transparent 70%);
+  transform: scale(0);
+  animation: rippleAnim 0.6s ease-out forwards;
+  pointer-events: none;
+  z-index: 99;
+}
+
+@keyframes rippleAnim {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(3.5); opacity: 0; }
+}

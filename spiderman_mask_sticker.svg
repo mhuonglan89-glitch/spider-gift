@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
+  <defs>
+    <!-- Sticker Drop Shadow -->
+    <filter id="sticker-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#000000" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    
+    <!-- Mask Gradient (Classic Comic Spidey Red) -->
+    <radialGradient id="mask-grad" cx="50%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#ff2233"/>
+      <stop offset="65%" stop-color="#d81525"/>
+      <stop offset="100%" stop-color="#a00c18"/>
+    </radialGradient>
+
+    <!-- Eye Lens Gradient (Subtle white-silver sheen) -->
+    <linearGradient id="lens-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f0f4f8"/>
+      <stop offset="100%" stop-color="#d8e2ec"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#sticker-shadow)">
+    <!-- Die-cut White Sticker Base -->
+    <path d="M100 12 C158 12 188 60 188 125 C188 178 148 228 100 228 C52 228 12 178 12 125 C12 60 42 12 100 12 Z"
+          fill="#ffffff" />
+
+    <!-- Red Mask Main Body -->
+    <path d="M100 18 C152 18 182 62 182 125 C182 174 145 222 100 222 C55 222 18 174 18 125 C18 62 48 18 100 18 Z"
+          fill="url(#mask-grad)" stroke="#111111" stroke-width="4" stroke-linejoin="round" />
+
+    <!-- Black Spider Web Lines on Mask -->
+    <!-- Center vertical line -->
+    <line x1="100" y1="18" x2="100" y2="222" stroke="#111111" stroke-width="2.5" stroke-linecap="round"/>
+    
+    <!-- Diagonal spokes radiating from center nose point (100, 120) -->
+    <path d="M100 120 L30 45" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L58 26" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L142 26" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L170 45" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L180 90" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L20 90" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L22 145" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L178 145" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L40 195" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L160 195" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L75 218" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M100 120 L125 218" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Concentric Web Arcs (Forehead arcs) -->
+    <path d="M48 65 Q100 95 152 65" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M62 45 Q100 70 138 45" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M78 28 Q100 45 122 28" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Concentric Web Arcs (Chin arcs) -->
+    <path d="M42 165 Q100 135 158 165" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M58 185 Q100 160 142 185" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+    <path d="M75 205 Q100 188 125 205" fill="none" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+
+    <!-- Iconic Spider-Man Eyes (Left Eye) -->
+    <!-- Black Outer Rim -->
+    <path d="M94 116 C88 95 62 82 36 86 C32 94 30 114 42 138 C56 164 88 152 94 135 C96 128 96 122 94 116 Z"
+          fill="#111111" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+    <!-- White Inner Lens -->
+    <path d="M90 118 C85 101 64 91 43 94 C40 100 38 114 48 134 C60 156 84 145 90 132 C92 126 92 122 90 118 Z"
+          fill="url(#lens-grad)" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Iconic Spider-Man Eyes (Right Eye) -->
+    <!-- Black Outer Rim -->
+    <path d="M106 116 C112 95 138 82 164 86 C168 94 170 114 158 138 C144 164 112 152 106 135 C104 128 104 122 106 116 Z"
+          fill="#111111" stroke="#111111" stroke-width="2" stroke-linejoin="round"/>
+    <!-- White Inner Lens -->
+    <path d="M110 118 C115 101 136 91 157 94 C160 100 162 114 152 134 C140 156 116 145 110 132 C108 126 108 122 110 118 Z"
+          fill="url(#lens-grad)" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Subtle Vinyl Sticker Gloss Reflection -->
+    <path d="M100 24 C142 24 168 55 174 100 C162 60 135 34 95 34 C65 34 45 48 35 68 C42 40 68 24 100 24 Z"
+          fill="#ffffff" opacity="0.22"/>
+  </g>
+</svg>

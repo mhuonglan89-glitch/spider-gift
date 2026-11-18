@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Món Quà Dành Cho Người Thương ✨</title>
+  <meta name="description" content="Trang web quà tặng bó hoa kỷ niệm, chữ bay neon và thư tình cảm động">
+  
+  <!-- Google Fonts: 100% chuẩn tiếng Việt, không bao giờ lỗi dấu -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;1,400&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas nền sao lấp lánh & bụi sáng toàn màn hình -->
+  <canvas id="ambient-canvas"></canvas>
+
+  <!-- Thanh điều khiển tối giản, tinh tế (không còn vẻ thô của AI builder) -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button id="btn-edit" class="nav-btn icon-only subtle-btn" title="Chỉnh sửa ảnh & lời nhắn">
+        <span class="icon">⚙️</span>
+      </button>
+    </div>
+    
+    <div class="nav-right">
+      <button id="btn-viewmode" class="nav-btn icon-only subtle-btn" title="Đổi giao diện Điện thoại / Máy tính">
+        <span class="icon" id="viewmode-icon">📱</span>
+      </button>
+      <button id="btn-music" class="nav-btn icon-only music-btn subtle-btn" title="Bật/Tắt nhạc nền">
+        <span class="music-wave">
+          <span></span><span></span><span></span>
+        </span>
+        <span class="icon">🎵</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Khung container chính (tối ưu cho cả Mobile lẫn Desktop/Laptop) -->
+  <main class="app-viewport" id="app-viewport">
+    <div class="screen-wrapper" id="screen-wrapper">
+
+      <!-- ==============================================
+           GIAO DIỆN 1: BÓ HOA TÌNH YÊU CÓ ẢNH (BOUQUET)
+           ============================================== -->
+      <section class="scene scene-bouquet active" id="scene-bouquet">
+        <div class="bouquet-content">
+          <!-- Hào quang phát sáng sau bó hoa -->
+          <div class="bouquet-aura"></div>
+
+          <!-- Bó hoa 3D chứa 6 bông hoa ảnh -->
+          <div class="bouquet-container" id="bouquet-container">
+            <!-- Cụm hoa chứa 6 ảnh -->
+            <div class="flower-cluster">
+              <!-- Bông hoa 1: Trên trái -->
+              <div class="flower-slot slot-1" data-index="0">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 1" class="flower-img" id="bouquet-img-0">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Bông hoa 2: Đỉnh giữa -->
+              <div class="flower-slot slot-2" data-index="1">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 2" class="flower-img" id="bouquet-img-1">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Bông hoa 3: Trên phải -->
+              <div class="flower-slot slot-3" data-index="2">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 3" class="flower-img" id="bouquet-img-2">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Bông hoa 4: Giữa trái -->
+              <div class="flower-slot slot-4" data-index="3">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 4" class="flower-img" id="bouquet-img-3">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Bông hoa 5: Tâm giữa -->
+              <div class="flower-slot slot-5" data-index="4">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 5" class="flower-img" id="bouquet-img-4">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Bông hoa 6: Giữa phải -->
+              <div class="flower-slot slot-6" data-index="5">
+                <div class="flower-petals-glow"></div>
+                <div class="flower-photo-frame">
+                  <img src="" alt="Hoa ảnh 6" class="flower-img" id="bouquet-img-5">
+                  <div class="flower-overlay"></div>
+                </div>
+              </div>
+
+              <!-- Hoa baby trắng & lá bạch đàn mềm mại tự nhiên (thay cho emoji giả tạo) -->
+              <div class="deco-botanical deco-botanical-1">
+                <svg viewBox="0 0 50 50" width="40" height="40" fill="none">
+                  <path d="M12 42 Q 24 22, 38 10" stroke="#8fa397" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+                  <circle cx="38" cy="10" r="4" fill="#ffffff" filter="drop-shadow(0 0 5px #ffd1dc)"/>
+                  <circle cx="28" cy="18" r="3" fill="#fff5f7"/>
+                  <circle cx="18" cy="28" r="2.5" fill="#ffffff"/>
+                </svg>
+              </div>
+              <div class="deco-botanical deco-botanical-2">
+                <svg viewBox="0 0 50 50" width="40" height="40" fill="none">
+                  <path d="M38 42 Q 26 22, 12 10" stroke="#8fa397" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+                  <circle cx="12" cy="10" r="4" fill="#ffffff" filter="drop-shadow(0 0 5px #ffd1dc)"/>
+                  <circle cx="22" cy="18" r="3" fill="#fff5f7"/>
+                  <circle cx="32" cy="28" r="2.5" fill="#ffffff"/>
+                </svg>
+              </div>
+              <div class="deco-botanical deco-botanical-3">
+                <svg viewBox="0 0 30 30" width="26" height="26" fill="none">
+                  <circle cx="15" cy="15" r="4" fill="#ffb8cc" opacity="0.85"/>
+                  <circle cx="15" cy="15" r="7" stroke="#ffd6e3" stroke-width="1.5" stroke-dasharray="2 2"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Giấy gói hoa phong cách Hàn Quốc màu hồng pastel mờ tinh tế (không bóng loang) -->
+            <div class="bouquet-wrap-wrapper">
+              <svg class="bouquet-wrap-svg" viewBox="0 0 340 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="paperGradBack" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#fae3eb"/>
+                    <stop offset="100%" stop-color="#f5cdd8"/>
+                  </linearGradient>
+                  <linearGradient id="paperGradFront" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#fae5ec"/>
+                  </linearGradient>
+                  <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#f27a94"/>
+                    <stop offset="100%" stop-color="#dd4c6f"/>
+                  </linearGradient>
+                  <filter id="naturalShadow" x="-10%" y="-10%" width="120%" height="130%">
+                    <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.3"/>
+                  </filter>
+                </defs>
+
+                <!-- Lớp giấy gói sau -->
+                <path d="M40 30 C 80 5, 260 5, 300 30 C 315 110, 230 270, 170 310 C 110 270, 25 110, 40 30 Z" 
+                      fill="url(#paperGradBack)" filter="url(#naturalShadow)"/>
+                
+                <!-- Lớp nếp gấp giấy gói trước bên trái -->
+                <path d="M50 45 C 90 20, 160 50, 170 120 C 140 180, 110 260, 170 305 C 115 265, 35 125, 50 45 Z" 
+                      fill="url(#paperGradFront)"/>
+                
+                <!-- Lớp nếp gấp giấy gói trước bên phải -->
+                <path d="M290 45 C 250 20, 180 50, 170 120 C 200 180, 230 260, 170 305 C 225 265, 305 125, 290 45 Z" 
+                      fill="url(#paperGradFront)"/>
+
+                <!-- Nơ ruy băng lụa cao cấp -->
+                <g class="ribbon-group" transform="translate(0, 15)">
+                  <!-- Ruy băng đuôi rủ -->
+                  <path d="M165 190 C 150 220, 130 270, 110 295 C 125 285, 145 270, 162 210 Z" fill="url(#ribbonGrad)"/>
+                  <path d="M175 190 C 190 220, 210 270, 230 295 C 215 285, 195 270, 178 210 Z" fill="url(#ribbonGrad)"/>
+                  
+                  <!-- Cánh nơ trái -->
+                  <path d="M170 180 C 140 145, 95 155, 105 185 C 115 205, 150 195, 170 185 Z" fill="url(#ribbonGrad)" filter="url(#naturalShadow)"/>
+                  <!-- Cánh nơ phải -->
+                  <path d="M170 180 C 200 145, 245 155, 235 185 C 225 205, 190 195, 170 185 Z" fill="url(#ribbonGrad)" filter="url(#naturalShadow)"/>
+                  
+                  <!-- Cúc tâm nơ -->
+                  <ellipse cx="170" cy="183" rx="14" ry="12" fill="#f27a94"/>
+                  <ellipse cx="170" cy="183" rx="11" ry="9" fill="#e04c70"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Lời bài hát / Trích dẫn dưới bó hoa -->
+          <div class="lyrics-quote" id="bouquet-lyrics">
+            "TRỪ KHI SỚM MAI MỞ MẮT THẤY..."
+          </div>
+
+          <!-- Nút tương tác: Ấn & Giữ lâu (Hold to open) -->
+          <div class="hold-action-area" id="hold-target">
+            <div class="hold-ring-container">
+              <svg class="hold-svg" viewBox="0 0 100 100">
+                <circle class="hold-bg-circle" cx="50" cy="50" r="42"></circle>
+                <circle class="hold-progress-circle" id="hold-progress-circle" cx="50" cy="50" r="42"></circle>
+              </svg>
+              <div class="hold-inner-btn" id="hold-inner-btn">
+                <span class="hold-icon">💖</span>
+              </div>
+            </div>
+            <p class="hold-hint" id="hold-hint">Chạm và giữ lâu để mở quà ✨</p>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           GIAO DIỆN 2: CHỮ BAY ĐỘNG & ẢNH KỶ NIỆM (FLYING)
+           ============================================== -->
+      <section class="scene scene-flying" id="scene-flying">
+        <!-- Canvas vẽ hiệu ứng đường hầm sao / hạt tim bay 3D -->
+        <canvas id="flying-particles-canvas"></canvas>
+
+        <!-- Container chứa các câu chữ phát sáng neon & ảnh trôi -->
+        <div class="flying-elements-stage" id="flying-elements-stage">
+          <!-- Các câu nói neon và ảnh sẽ được sinh ra liên tục bằng JS -->
+        </div>
+
+        <!-- Thanh tiến trình thời gian hiệu ứng -->
+        <div class="flying-timeline-bar">
+          <div class="timeline-fill" id="flying-timeline-fill"></div>
+        </div>
+
+        <!-- Lời bài hát chạy ở giữa dưới -->
+        <div class="flying-bottom-quote" id="flying-bottom-quote">
+          "TA CỨ THẾ CỨ THẾ YÊU..."
+        </div>
+
+        <!-- Nút bỏ qua / tiếp tục nhanh -->
+        <button id="btn-skip-flying" class="skip-btn" title="Đi đến phong thư">
+          <span>Xem thiệp thư ngay</span> ➔
+        </button>
+      </section>
+
+
+      <!-- ==============================================
+           GIAO DIỆN 3: PHONG BÌ SPIDER-MAN BÁ KHÍ (ENVELOPE)
+           Phong cách bưu kiện Marvel Special Airmail chuẩn xịn
+           ============================================== -->
+      <section class="scene scene-envelope" id="scene-envelope">
+        <div class="envelope-scene-content">
+          <div class="envelope-wrapper spider-envelope-wrapper" id="envelope-wrapper">
+            <!-- Nắp phong thư (mở lật 3D) -->
+            <div class="envelope-flap spider-flap" id="envelope-flap"></div>
+
+            <!-- Thân phong thư Spider-Man ngầu bá khí -->
+            <div class="envelope-body spider-envelope-body">
+              <!-- Viền Airmail ziczac viền ngoài -->
+              <div class="airmail-edge-stitch"></div>
+
+              <!-- Tem bưu chính Marvel NYC & Dấu hủy bưu điện sóng lượn -->
+              <div class="envelope-postage-stamp">
+                <img src="marvel_badge.png" class="postage-marvel-badge" alt="Marvel">
+                <div class="postmark-circle">
+                  <span>QUEENS NYC</span>
+                  <span>AIRMAIL</span>
+                </div>
+                <div class="postmark-waves">
+                  <svg viewBox="0 0 50 16" width="46" height="15">
+                    <path d="M0,4 Q8,0 16,4 T32,4 T48,4 M0,8 Q8,4 16,8 T32,8 T48,8 M0,12 Q8,8 16,12 T32,12 T48,12" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.2"/>
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Mạng nhện vẽ tay ở góc -->
+              <div class="spider-web-corner top-left">
+                <svg viewBox="0 0 60 60" width="55" height="55" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.3">
+                  <path d="M0 0 L 60 60 M0 0 L 60 25 M0 0 L 25 60"/>
+                  <path d="M15 0 C 15 15, 0 15, 0 15 M30 0 C 30 30, 0 30, 0 30 M48 0 C 48 48, 0 48, 0 48"/>
+                </svg>
+              </div>
+              <div class="spider-web-corner bottom-right">
+                <svg viewBox="0 0 60 60" width="50" height="50" fill="none" stroke="rgba(230,36,41,0.4)" stroke-width="1.3">
+                  <path d="M60 60 L 0 0 M60 60 L 0 35 M60 60 L 35 0"/>
+                  <path d="M45 60 C 45 45, 60 45, 60 45 M30 60 C 30 30, 60 30, 60 30 M12 60 C 12 12, 60 12, 60 12"/>
+                </svg>
+              </div>
+
+              <!-- Nhãn bưu kiện tối mật gửi No -->
+              <div class="spider-envelope-center">
+                <span class="spider-top-tag">CONFIDENTIAL // SPIDER-ARCHIVES</span>
+                <h3 class="spider-envelope-title">SPIDER-MAN</h3>
+                <div class="spider-recipient-badge">
+                  <span class="badge-dot">●</span>
+                  <span class="badge-text">SPECIAL DELIVERY TO: NO 🕷️</span>
+                </div>
+              </div>
+
+              <!-- Sticker Mặt Nạ Spider-Man Dập Nổi 3D (Thay thế icon ảo cũ) -->
+              <div class="wax-seal spider-seal-sticker" id="wax-seal" title="Chạm vào sticker Người Nhện để mở thư">
+                <div class="spidey-mask-svg-wrap">
+                  <svg viewBox="0 0 200 240" class="spidey-mask-sticker-svg">
+                    <defs>
+                      <radialGradient id="maskGradReal" cx="50%" cy="45%" r="55%">
+                        <stop offset="0%" stop-color="#ff2e43"/>
+                        <stop offset="65%" stop-color="#d81525"/>
+                        <stop offset="100%" stop-color="#990915"/>
+                      </radialGradient>
+                      <linearGradient id="lensGradReal" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ffffff"/>
+                        <stop offset="70%" stop-color="#f0f4f8"/>
+                        <stop offset="100%" stop-color="#d8e2ec"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Viền die-cut sticker nhựa trắng thật -->
+                    <path d="M100 12 C158 12 188 60 188 125 C188 178 148 228 100 228 C52 228 12 178 12 125 C12 60 42 12 100 12 Z" fill="#ffffff" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.5))"/>
+                    <!-- Thân mặt nạ đỏ Spider-Man -->
+                    <path d="M100 18 C152 18 182 62 182 125 C182 174 145 222 100 222 C55 222 18 174 18 125 C18 62 48 18 100 18 Z" fill="url(#maskGradReal)" stroke="#111111" stroke-width="3.5" stroke-linejoin="round"/>
+                    <!-- Nan mạng nhện trên mặt nạ -->
+                    <line x1="100" y1="18" x2="100" y2="222" stroke="#111111" stroke-width="2.2" stroke-linecap="round"/>
+                    <path d="M100 120 L30 45 M100 120 L58 26 M100 120 L142 26 M100 120 L170 45 M100 120 L180 90 M100 120 L20 90 M100 120 L22 145 M100 120 L178 145 M100 120 L40 195 M100 120 L160 195 M100 120 L75 218 M100 120 L125 218" stroke="#111111" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M48 65 Q100 95 152 65 M62 45 Q100 70 138 45 M78 28 Q100 45 122 28 M42 165 Q100 135 158 165 M58 185 Q100 160 142 185 M75 205 Q100 188 125 205" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round"/>
+                    <!-- Mắt Người Nhện kinh điển (Mắt trái) -->
+                    <path d="M94 116 C88 95 62 82 36 86 C32 94 30 114 42 138 C56 164 88 152 94 135 C96 128 96 122 94 116 Z" fill="#111111" stroke="#111111" stroke-width="2"/>
+                    <path d="M90 118 C85 101 64 91 43 94 C40 100 38 114 48 134 C60 156 84 145 90 132 C92 126 92 122 90 118 Z" fill="url(#lensGradReal)"/>
+                    <!-- Mắt Người Nhện kinh điển (Mắt phải) -->
+                    <path d="M106 116 C112 95 138 82 164 86 C168 94 170 114 158 138 C144 164 112 152 106 135 C104 128 104 122 106 116 Z" fill="#111111" stroke="#111111" stroke-width="2"/>
+                    <path d="M110 118 C115 101 136 91 157 94 C160 100 162 114 152 134 C140 156 116 145 110 132 C108 126 108 122 110 118 Z" fill="url(#lensGradReal)"/>
+                    <!-- Vết lóa bóng vinyl -->
+                    <path d="M100 24 C142 24 168 55 174 100 C162 60 135 34 95 34 C65 34 45 48 35 68 C42 40 68 24 100 24 Z" fill="#ffffff" opacity="0.25"/>
+                  </svg>
+                </div>
+                <span class="sticker-peel-pill">CHẠM ĐỂ MỞ 🕸️</span>
+              </div>
+            </div>
+
+            <!-- Lá thư ẩn bên trong phong bì sẽ trượt ra -->
+            <div class="envelope-peek-letter" id="envelope-peek-letter"></div>
+          </div>
+
+          <!-- Dòng chữ tâm tình dưới phong thư -->
+          <div class="envelope-footer-quote" id="envelope-footer-quote">
+            "WITH GREAT POWER COMES GREAT LOVE FOR NO 🕷️"
+          </div>
+
+          <p class="tap-hint-envelope spider-tap-hint" id="tap-envelope-hint">
+            <span class="pulse-hand">🕸️</span> Bắn tơ để mở hồ sơ
+          </p>
+        </div>
+      </section>
+
+
+      <!-- ==============================================
+           GIAO DIỆN 4: KHUNG QUÀ TẶNG THỦ CÔNG SPIDER-MAN (HANDMADE GIFT FRAME)
+           Tái hiện chuẩn xác khung ảnh kỷ niệm thật từ Ảnh số 2 & Marvel Comic
+           ============================================== -->
+      <section class="scene scene-letter" id="scene-letter">
+        <div class="letter-scroll-area">
+          
+          <!-- Khung tranh gỗ đen cao cấp có dây đèn Fairy lights bao quanh -->
+          <div class="spidey-gift-frame-wrapper" id="romantic-letter-card">
+            
+            <!-- Dây đèn led đom đóm (Fairy lights) nhấp nháy lung linh viền quanh khung (Ảnh số 2) -->
+            <div class="frame-fairy-lights">
+              <span class="bulb b1"></span>
+              <span class="bulb b2"></span>
+              <span class="bulb b3"></span>
+              <span class="bulb b4"></span>
+              <span class="bulb b5"></span>
+              <span class="bulb b6"></span>
+              <span class="bulb b7"></span>
+              <span class="bulb b8"></span>
+              <span class="bulb b9"></span>
+              <span class="bulb b10"></span>
+              <span class="bulb b11"></span>
+              <span class="bulb b12"></span>
+              <span class="bulb b13"></span>
+              <span class="bulb b14"></span>
+            </div>
+
+            <!-- Tấm lót nền tranh phong cách giấy vẽ truyện tranh có lưới ô tập kẻ mờ -->
+            <div class="frame-mat-inner">
+              
+              <!-- Dây cờ mini "FOR NO ♡" treo ở góc trên (Ảnh số 2) -->
+              <div class="frame-top-garland">
+                <div class="garland-string"></div>
+                <div class="garland-flags">
+                  <span class="g-flag">F</span>
+                  <span class="g-flag">O</span>
+                  <span class="g-flag">R</span>
+                  <span class="g-flag spidey-icon">🕷️</span>
+                  <span class="g-flag">N</span>
+                  <span class="g-flag">O</span>
+                  <span class="g-flag heart-icon">♡</span>
+                </div>
+              </div>
+
+              <!-- Spider-Man đu tơ thật từ Ảnh 1 của user -->
+              <div class="sticker-swinging-spidey">
+                <img src="spiderman_swing_transparent.png" alt="Spider-Man" class="spidey-swing-img">
+              </div>
+
+              <!-- KHU VỰC ẢNH KỶ NIỆM (SHOWCASE): DẢI PHIM & ẢNH ĐÔI POLAROID -->
+              <div class="frame-photos-showcase">
+                <!-- Cột Trái: Dải Phim Photobooth 35mm (3 Ảnh Dọc Của No) -->
+                <div class="filmstrip-showcase-item">
+                  <div class="filmstrip-washi-tape"></div>
+                  <div class="photobooth-filmstrip">
+                    <div class="film-sprockets left">
+                      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    
+
+                    <div class="film-sprockets right">
+                      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+                    </div>
+
+                    <div class="film-footer-brand">
+                      <span>🎞️ 35MM</span>
+                      <span>FOR NO ♡</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cột Phải: Khung Ảnh Đôi Polaroid -->
+                <div class="couple-polaroid-showcase-item">
+                  <div class="comic-couple-polaroid">
+                    <div class="couple-tape-accent"></div>
+                    <div class="couple-photo-box">
+                      <img src="" alt="Ảnh cặp đôi" id="letter-couple-img" class="couple-photo">
+                    </div>
+                    <div class="couple-comic-caption">
+                      <span class="badge-tag">PARTNER IN CRIME ⚡</span>
+                      <span class="couple-date">NO & ME ♡</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PHẦN NỘI DUNG THƯ: RỘNG TOÀN BỘ CHIỀU NGANG (FULL WIDTH COMIC SPEECH BUBBLE) -->
+              <div class="comic-speech-bubble full-width-bubble">
+                <div class="bubble-header-meta">
+                  <span class="protocol-badge">MESSAGE FROM ALLY 🕷️</span>
+                  <span class="thwip-badge">THWIP!</span>
+                </div>
+
+                <h3 class="bubble-greeting" id="letter-greeting-text">Hey No, 🕷️</h3>
+
+                <div class="bubble-body" id="letter-body-text">
+                  <!-- Lời nhắn chân thành, ấm áp, ngầu, không sến -->
+                </div>
+
+                <div class="bubble-signature" id="letter-signature-text">
+                  Your friendly neighborhood ally 🕸️ ♡
+                </div>
+
+                <!-- Đuôi bong bóng thoại truyện tranh -->
+                <div class="comic-bubble-tail"></div>
+              </div>
+
+              <!-- Thẻ ẩn để tương thích code script -->
+              <span id="letter-end-quote" style="display:none"></span>
+
+            </div>
+
+          </div>
+
+          <!-- Các nút thao tác cuối thư -->
+          <div class="letter-actions">
+            <button id="btn-replay" class="letter-action-btn glow spider-btn">
+              <span>↺</span> Xem lại từ đầu
+            </button>
+            <button id="btn-share-trigger" class="letter-action-btn outline spider-outline">
+              <span>🕸️</span> Chia sẻ cho No
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+
+  <!-- ==============================================
+       MODAL CHỈNH SỬA (EDITOR DRAWER)
+       Dành cho người tạo web chỉnh sửa mọi thứ
+       ============================================== -->
+  <div class="editor-modal-backdrop" id="editor-modal">
+    <div class="editor-modal-panel">
+      <div class="editor-header">
+        <div class="editor-header-left">
+          <h3>✨ Tùy Chỉnh Quà Tặng</h3>
+          <button id="btn-guide-modal-trigger" class="guide-trigger-btn" title="Xem cách tải lên mạng không cần server">
+            <span>🚀</span> Cách up web
+          </button>
+        </div>
+        <button id="btn-close-editor" class="close-modal-btn">✕</button>
+      </div>
+
+      <div class="editor-tabs">
+        <button class="tab-btn active" data-tab="tab-bouquet">💐 Bó Hoa (6 ảnh)</button>
+        <button class="tab-btn" data-tab="tab-flying">✨ Chữ Bay & Kỷ Niệm</button>
+        <button class="tab-btn" data-tab="tab-letter">🕷️ Thiệp Spider-Man & Ảnh Đôi</button>
+        <button class="tab-btn" data-tab="tab-music">🎵 Nhạc Nền</button>
+        <button class="tab-btn highlight-tab" data-tab="tab-export">🚀 Xuất Bản & Tải Về</button>
+      </div>
+
+      <div class="editor-body">
+        <!-- TAB 1: BÓ HOA -->
+        <div class="tab-content active" id="tab-bouquet">
+          <p class="tab-intro">Chọn hoặc tải lên 6 bức ảnh chân dung để tạo thành 6 bông hoa rạng rỡ:</p>
+          <div class="bouquet-uploader-grid">
+            <div class="photo-upload-card" data-slot="0">
+              <span class="slot-label">Hoa 1 (Trên trái)</span>
+              <div class="preview-box">
+                <img id="edit-prev-0" src="" alt="Xem trước 1">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="0">
+              </label>
+            </div>
+
+            <div class="photo-upload-card" data-slot="1">
+              <span class="slot-label">Hoa 2 (Đỉnh giữa)</span>
+              <div class="preview-box">
+                <img id="edit-prev-1" src="" alt="Xem trước 2">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="1">
+              </label>
+            </div>
+
+            <div class="photo-upload-card" data-slot="2">
+              <span class="slot-label">Hoa 3 (Trên phải)</span>
+              <div class="preview-box">
+                <img id="edit-prev-2" src="" alt="Xem trước 3">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="2">
+              </label>
+            </div>
+
+            <div class="photo-upload-card" data-slot="3">
+              <span class="slot-label">Hoa 4 (Giữa trái)</span>
+              <div class="preview-box">
+                <img id="edit-prev-3" src="" alt="Xem trước 4">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="3">
+              </label>
+            </div>
+
+            <div class="photo-upload-card" data-slot="4">
+              <span class="slot-label">Hoa 5 (Tâm giữa)</span>
+              <div class="preview-box">
+                <img id="edit-prev-4" src="" alt="Xem trước 5">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="4">
+              </label>
+            </div>
+
+            <div class="photo-upload-card" data-slot="5">
+              <span class="slot-label">Hoa 6 (Giữa phải)</span>
+              <div class="preview-box">
+                <img id="edit-prev-5" src="" alt="Xem trước 6">
+              </div>
+              <label class="custom-file-btn">
+                <span>Chọn ảnh</span>
+                <input type="file" accept="image/*" class="photo-input" data-target="5">
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 15px;">
+            <label>Câu trích dẫn dưới bó hoa:</label>
+            <input type="text" id="edit-bouquet-quote" class="form-input" value='"TRỪ KHI SỚM MAI MỞ MẮT THẤY..."'>
+          </div>
+        </div>
+
+        <!-- TAB 2: CHỮ BAY & KỶ NIỆM -->
+        <div class="tab-content" id="tab-flying">
+          <p class="tab-intro">Chỉnh sửa các câu chữ neon phát sáng và danh sách ảnh kỷ niệm trôi bồng bềnh:</p>
+          
+          <div class="form-group">
+            <label>Danh sách câu chữ phát sáng (mỗi câu một dòng):</label>
+            <textarea id="edit-flying-messages" class="form-textarea" rows="7"></textarea>
+            <span class="helper-text">💡 Các câu chữ này sẽ phát sáng neon màu hồng và bay lơ lửng như trên TikTok!</span>
+          </div>
+
+          <div class="form-group">
+            <label>Tải lên thêm ảnh kỷ niệm trôi trong không gian (tùy chọn nhiều ảnh):</label>
+            <label class="custom-file-btn full-width">
+              <span>➕ Thêm nhiều ảnh kỷ niệm</span>
+              <input type="file" accept="image/*" multiple id="edit-flying-photos-input">
+            </label>
+            <div class="memory-photos-preview" id="memory-photos-preview-list"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Thời lượng hiệu ứng chữ bay (giây):</label>
+            <input type="number" id="edit-flying-duration" class="form-input" min="5" max="30" value="12">
+          </div>
+        </div>
+
+        <!-- TAB 3: BỨC THƯ & ẢNH ĐÔI SPIDER-MAN -->
+        <div class="tab-content" id="tab-letter">
+          <p class="tab-intro">Tùy chỉnh thông điệp siêu anh hùng bá khí và ảnh cặp đôi gửi cho No:</p>
+          
+          <div class="form-group">
+            <label>3 Ảnh cho dải phim Photobooth (Cột trái khung ảnh):</label>
+            <span class="helper-text">💡 Mặc định dải phim dùng 3 ảnh đầu của bó hoa. Bạn có thể tải ảnh riêng cho dải phim:</span>
+            <div class="filmstrip-edit-row">
+              <div class="film-slot">
+                <div class="preview-box mini"><img id="edit-prev-film-0" src="" alt="Phim 1"></div>
+                <label class="custom-file-btn mini">
+                  <span>Ảnh 1</span>
+                  <input type="file" accept="image/*" class="film-input" data-film="0">
+                </label>
+              </div>
+              <div class="film-slot">
+                <div class="preview-box mini"><img id="edit-prev-film-1" src="" alt="Phim 2"></div>
+                <label class="custom-file-btn mini">
+                  <span>Ảnh 2</span>
+                  <input type="file" accept="image/*" class="film-input" data-film="1">
+                </label>
+              </div>
+              <div class="film-slot">
+                <div class="preview-box mini"><img id="edit-prev-film-2" src="" alt="Phim 3"></div>
+                <label class="custom-file-btn mini">
+                  <span>Ảnh 3</span>
+                  <input type="file" accept="image/*" class="film-input" data-film="2">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Lời chào mở đầu:</label>
+            <input type="text" id="edit-letter-greeting" class="form-input" value="Hey No, 🕷️">
+          </div>
+
+          <div class="form-group">
+            <label>Nội dung bức thư:</label>
+            <textarea id="edit-letter-body" class="form-textarea" rows="6"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Chữ ký / Lời kết:</label>
+            <input type="text" id="edit-letter-signature" class="form-input" value="Your friendly neighborhood ally 🕸️ ♡">
+          </div>
+
+          <div class="form-group">
+            <label>Ảnh cặp đôi gắn ở góc bức thư:</label>
+            <div class="couple-photo-edit-row">
+              <div class="preview-box square">
+                <img id="edit-prev-couple" src="" alt="Ảnh cặp đôi">
+              </div>
+              <label class="custom-file-btn">
+                <span>Đổi ảnh cặp đôi</span>
+                <input type="file" accept="image/*" id="edit-couple-input">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 4: ÂM NHẠC -->
+        <div class="tab-content" id="tab-music">
+          <p class="tab-intro">Chọn giai điệu lãng mạn du dương cho trang web:</p>
+          
+          <div class="form-group">
+            <label>Chọn nhạc có sẵn:</label>
+            <select id="edit-music-select" class="form-select">
+              <option value="romantic-piano">🎹 Romantic Piano Lullaby (Có sẵn - Siêu nhẹ)</option>
+              <option value="cu-the">🎵 Cứ Thế (Orange - Piano/Acoustic)</option>
+              <option value="until-i-found-you">🎶 Until I Found You (Romantic Strings)</option>
+              <option value="custom-url">🔗 Tự nhập đường link MP3 trực tiếp</option>
+              <option value="upload">📁 Tải file MP3 từ máy của bạn</option>
+            </select>
+          </div>
+
+          <div class="form-group hidden" id="group-custom-url">
+            <label>Đường dẫn link MP3:</label>
+            <input type="url" id="edit-music-url" class="form-input" placeholder="https://example.com/song.mp3">
+          </div>
+
+          <div class="form-group hidden" id="group-upload-mp3">
+            <label>Tải file nhạc từ thiết bị (.mp3, .m4a):</label>
+            <label class="custom-file-btn full-width">
+              <span>Chọn file âm thanh</span>
+              <input type="file" accept="audio/*" id="edit-music-file">
+            </label>
+            <span class="helper-text" id="music-file-name">Chưa chọn file</span>
+          </div>
+
+          <div class="audio-test-row">
+            <button id="btn-test-audio" class="action-btn small">▶ Nghe thử</button>
+            <span class="helper-text">Âm nhạc sẽ tự động phát sau lần chạm đầu tiên của người nhận.</span>
+          </div>
+        </div>
+
+        <!-- TAB 5: XUẤT BẢN & TẢI VỀ (GITHUB / VERCEL / NETLIFY) -->
+        <div class="tab-content" id="tab-export">
+          <div class="export-banner">
+            <h4>🚀 Đưa web lên GitHub & Vercel (Người nhận mở ở đâu cũng thấy ảnh của bạn)</h4>
+            <p>Trang web này là <strong>Zero-Server Static Web</strong>, Vercel triển khai cực nhanh trong vài giây!</p>
+          </div>
+
+          <div class="export-options">
+            <div class="export-card primary">
+              <div class="export-card-header">
+                <span class="badge">Khuyên Dùng Cho Vercel</span>
+                <h5>1. Tải file <code>index.html</code> (Đã nhúng sẵn 100% ảnh & lời chúc)</h5>
+              </div>
+              <p>Trình duyệt sẽ xuất 1 file <code>index.html</code> tự động chứa toàn bộ ảnh bạn đã tải và lời chúc. Bạn chỉ cần copy đè file này vào thư mục dự án là git push lên GitHub/Vercel được ngay.</p>
+              <button id="btn-download-html" class="action-btn glow full-width">
+                <span>📥</span> Tải File index.html Hoàn Chỉnh Về Máy
+              </button>
+            </div>
+
+            <div class="export-card">
+              <div class="export-card-header">
+                <span class="badge">Cách 2</span>
+                <h5>2. Tải file <code>script.js</code> (Đã nhúng sẵn cấu hình ảnh)</h5>
+              </div>
+              <p>Nếu bạn muốn giữ nguyên cấu trúc nhiều file (HTML, CSS, JS), hãy tải file này và copy đè vào file <code>script.js</code> trong thư mục dự án.</p>
+              <button id="btn-download-script-js" class="action-btn outline full-width">
+                <span>📄</span> Tải File script.js Đã Chứa Ảnh
+              </button>
+            </div>
+
+            <div class="export-card">
+              <h5>🐙 Hướng dẫn lệnh Git để đẩy lên GitHub & Vercel:</h5>
+              <ol class="step-guide">
+                <li>Vào GitHub tạo 1 repository mới (ví dụ: <code>tang-no-spiderman</code>).</li>
+                <li>Mở terminal tại thư mục này và chạy các lệnh:
+                  <pre style="background: #111; color: #4ade80; padding: 8px 12px; border-radius: 6px; font-family: monospace; font-size: 13px; margin: 8px 0; overflow-x: auto;">git add .
+git commit -m "Cập nhật web quà tặng No"
+git remote add origin https://github.com/TÊN_GITHUB/TÊN_REPO.git
+git push -u origin main</pre>
+                </li>
+                <li>Vào Vercel -> Import Repository vừa tạo -> Bấm <strong>Deploy</strong> (Vercel tự nhận diện web tĩnh và chạy ngay lập tức)!</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-footer">
+        <button id="btn-save-draft" class="action-btn glow">
+          <span>💾</span> Lưu vào trình duyệt này
+        </button>
+        <button id="btn-reset-default" class="action-btn outline">
+          <span>↺</span> Khôi phục mặc định
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==============================================
+       MODAL HƯỚNG DẪN UP WEB KHÔNG CẦN SERVER
+       ============================================== -->
+  <div class="editor-modal-backdrop" id="guide-modal">
+    <div class="editor-modal-panel guide-panel">
+      <div class="editor-header">
+        <h3>🚀 Hướng Dẫn Up Web Miễn Phí (Không Cần Server)</h3>
+        <button id="btn-close-guide" class="close-modal-btn">✕</button>
+      </div>
+      <div class="guide-body">
+        <div class="guide-method">
+          <h4>🌟 Cách 1: Netlify Drop (Đơn giản nhất - 30 giây là xong)</h4>
+          <ul>
+            <li><strong>Bước 1:</strong> Trong bảng "Chỉnh sửa", chỉnh ảnh và lời chúc của bạn, sau đó bấm <strong>"Tải File Web Hoàn Chỉnh"</strong>.</li>
+            <li><strong>Bước 2:</strong> Dùng trình duyệt truy cập: <a href="https://app.netlify.com/drop" target="_blank">https://app.netlify.com/drop</a> (hoàn toàn miễn phí, không cần thẻ).</li>
+            <li><strong>Bước 3:</strong> Kéo thả file <code>index.html</code> bạn vừa tải vào ô kéo thả trên trang web đó.</li>
+            <li><strong>Bước 4:</strong> Netlify sẽ tạo ngay 1 đường link online (ví dụ: <code>https://tang-nguoi-thuong.netlify.app</code>). Bạn chỉ cần copy link đó gửi qua tin nhắn cho người yêu!</li>
+          </ul>
+        </div>
+
+        <div class="guide-method">
+          <h4>🌟 Cách 2: Vercel hoặc GitHub Pages</h4>
+          <ul>
+            <li>Nếu bạn có tài khoản GitHub, chỉ cần tạo 1 Repository mới, tải file lên và bật <strong>GitHub Pages</strong> ở mục Settings.</li>
+            <li>Hoặc đăng nhập <a href="https://vercel.com" target="_blank">Vercel.com</a> và kéo thả thư mục dự án lên, link chạy siêu tốc toàn cầu.</li>
+          </ul>
+        </div>
+
+        <div class="guide-method">
+          <h4>🌟 Cách 3: Mở trực tiếp trên máy hoặc gửi qua AirDrop / Telegram</h4>
+          <ul>
+            <li>File HTML tự chứa toàn bộ dữ liệu, người nhận chỉ cần mở bằng Safari (iPhone) hoặc Chrome là chạy mượt mà không cần mạng Internet!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Player ẩn -->
+  <audio id="bg-audio" preload="auto" loop></audio>
+
+  <!-- Script ứng dụng -->
+  <script src="script.js"></script>
+</body>
+</html>
