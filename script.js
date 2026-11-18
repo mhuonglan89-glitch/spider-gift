@@ -1455,11 +1455,16 @@ const voucherToast = document.getElementById('voucher-toast');
 let isCassettePlaying = false;
 let cassetteVoucherTimer = null;
 
-// Cài đặt nguồn nhạc chuẩn: webm native (hỗ trợ 100% trình duyệt hiện đại)
+// Cài đặt nguồn nhạc tương thích 100% điện thoại (iPhone Safari & Android) lẫn máy tính
 if (cassetteAudio) {
-  if (!cassetteAudio.src || cassetteAudio.src.endsWith('mp3')) {
+  // iPhone / iOS Safari bắt buộc dùng định dạng m4a / mp4 (AAC), không hỗ trợ webm
+  const canPlayM4A = !!(cassetteAudio.canPlayType && (cassetteAudio.canPlayType('audio/mp4; codecs="mp4a.40.2"') || cassetteAudio.canPlayType('audio/mp4')));
+  if (canPlayM4A) {
+    cassetteAudio.src = 'assets/de_danh_cho_em.m4a';
+  } else {
     cassetteAudio.src = 'assets/de_danh_cho_em.webm';
   }
+  cassetteAudio.load();
 }
 
 // Bắt đầu phân cảnh Cassette khi người dùng bấm chuyển trang từ thư
@@ -1497,7 +1502,7 @@ function stopCassetteScene() {
   pauseCassette();
 }
 
-// Hàm phát nhạc bài "Để Dành Cho Em" đúng đoạn đắt giá
+// Hàm phát nhạc bài "Để Dành Cho Em" đúng đoạn đắt giá (tối ưu hóa cho iOS & Android)
 function playCassetteTrack() {
   if (!cassetteWrapper) return;
   isCassettePlaying = true;
@@ -1508,26 +1513,36 @@ function playCassetteTrack() {
   if (cassetteAudio) {
     // Timestamp đoạn "Baby em đâu òi, nhanh lên anh đang đợi...": 163.5s (02:43.5)
     const lyricTimestamp = 163.5;
-    try {
-      if (cassetteAudio.readyState >= 1) {
-        cassetteAudio.currentTime = lyricTimestamp;
-      } else {
-        cassetteAudio.addEventListener('loadedmetadata', function onLoadedMeta() {
-          cassetteAudio.removeEventListener('loadedmetadata', onLoadedMeta);
+
+    const seekChorus = () => {
+      try {
+        if (Math.abs(cassetteAudio.currentTime - lyricTimestamp) > 1.5) {
           cassetteAudio.currentTime = lyricTimestamp;
-        });
+        }
+      } catch (e) {
+        console.log('Error seeking to timestamp:', e);
       }
-    } catch (e) {
-      console.log('Error setting currentTime:', e);
+    };
+
+    if (cassetteAudio.readyState >= 1) {
+      seekChorus();
     }
 
     const playPromise = cassetteAudio.play();
     if (playPromise !== undefined) {
-      playPromise.catch(e => {
-        console.warn('Cassette audio autoplay blocked or file missing, playing melodic vibes:', e);
+      playPromise.then(() => {
+        // Trên iPhone/Safari, tua đến đoạn điệp khúc ngay khi audio đã chính thức bắt đầu phát
+        seekChorus();
+      }).catch(e => {
+        console.warn('Cassette audio autoplay blocked or file missing on mobile:', e);
         playCassetteMelody();
       });
     }
+
+    cassetteAudio.addEventListener('playing', function onPlayingOnce() {
+      cassetteAudio.removeEventListener('playing', onPlayingOnce);
+      seekChorus();
+    });
   } else {
     playCassetteMelody();
   }

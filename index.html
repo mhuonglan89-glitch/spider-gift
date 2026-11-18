@@ -1011,10 +1011,11 @@ git push -u origin main</pre>
   </div>
 
   <!-- Audio Player ẩn -->
-  <audio id="bg-audio" preload="auto" loop></audio>
-  <audio id="cassette-audio" preload="auto">
+  <audio id="bg-audio" preload="auto" loop playsinline></audio>
+  <audio id="cassette-audio" preload="auto" playsinline webkit-playsinline>
+    <source src="assets/de_danh_cho_em.m4a" type="audio/mp4">
+    <source src="assets/de_danh_cho_em.mp4" type="audio/mp4">
     <source src="assets/de_danh_cho_em.webm" type="audio/webm">
-    <source src="assets/de_danh_cho_em.mp3" type="audio/mpeg">
   </audio>
 
   <!-- Cấu hình tùy chỉnh của người dùng (chứa ảnh & lời chúc) -->
