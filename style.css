@@ -2198,63 +2198,100 @@ body.recipient-mode #guide-modal {
 }
 
 /* ==========================================================
-   BƯU KIỆN TIẾP TẾ 500K: BĂNG CASSETTE RETRO & TỜ TIỀN 500K
+   SCENE 5: TRANG BĂNG CASSETTE RETRO & VOUCHER 500K CHO NO
+   (Trang riêng biệt: Nhạc phát, sau 3s tự động cuộn ra voucher)
    ========================================================== */
-.cassette-gift-section {
-  margin-top: 35px;
-  margin-bottom: 25px;
+.scene-cassette {
+  background: radial-gradient(circle at 50% 30%, #1c152a 0%, #0c0914 60%, #030207 100%);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: 100%;
+  z-index: 10;
+  padding: 0;
+}
+
+.scene-cassette.active {
+  display: block;
+}
+
+.cassette-scene-scroll {
+  min-height: 100%;
+  padding: 60px 20px 40px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
-  z-index: 10;
+  box-sizing: border-box;
 }
 
-.supply-drop-header {
-  text-align: center;
-  margin-bottom: 18px;
+/* Thanh điều hướng */
+.cassette-nav-bar {
   width: 100%;
-}
-
-.supply-badge-wrap {
+  max-width: 440px;
   display: flex;
-  justify-content: center;
-  margin-bottom: 6px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
-.supply-badge {
-  font-size: 11px;
+.cassette-back-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+.cassette-back-btn:hover {
+  background: rgba(255, 59, 92, 0.25);
+  border-color: #ff3b5c;
+  transform: translateX(-2px);
+}
+
+.cassette-scene-pill {
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 1.5px;
   color: #ff3b5c;
   background: rgba(255, 59, 92, 0.15);
   border: 1.5px solid rgba(255, 59, 92, 0.4);
-  padding: 4px 14px;
-  border-radius: 20px;
-  text-transform: uppercase;
-  box-shadow: 0 0 15px rgba(255, 59, 92, 0.3);
-  animation: pulseBadge 2s infinite ease-in-out;
+  padding: 4px 12px;
+  border-radius: 16px;
+  box-shadow: 0 0 12px rgba(255, 59, 92, 0.3);
 }
 
-@keyframes pulseBadge {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 59, 92, 0.3); }
-  50% { transform: scale(1.04); box-shadow: 0 0 20px rgba(255, 59, 92, 0.6); }
+/* Tiêu đề trang */
+.cassette-scene-intro {
+  text-align: center;
+  margin-bottom: 22px;
 }
 
-.supply-title {
+.cassette-main-title {
   font-family: var(--font-sans);
-  font-size: 19px;
-  font-weight: 800;
+  font-size: 22px;
+  font-weight: 900;
   color: #ffffff;
-  text-shadow: 0 0 12px rgba(255, 59, 92, 0.7);
-  margin-bottom: 4px;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  text-shadow: 0 0 15px rgba(255, 59, 92, 0.8), 0 2px 4px rgba(0,0,0,0.8);
+  margin-bottom: 6px;
 }
 
-.supply-subtitle {
+.cassette-main-sub {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
 }
 
@@ -2270,17 +2307,16 @@ body.recipient-mode #guide-modal {
 
 .cassette-body {
   width: 100%;
-  background: linear-gradient(145deg, #23222a 0%, #15141c 100%);
-  border: 2px solid rgba(255, 255, 255, 0.18);
-  border-radius: 14px;
-  padding: 14px 16px 16px 16px;
+  background: linear-gradient(145deg, #24222c 0%, #14131b 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 16px 18px;
   box-shadow: 
-    0 16px 40px rgba(0, 0, 0, 0.8),
-    0 0 25px rgba(226, 54, 54, 0.25),
-    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    0 20px 45px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(226, 54, 54, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.25);
   position: relative;
-  z-index: 3;
-  overflow: hidden;
+  z-index: 5;
   box-sizing: border-box;
 }
 
@@ -2290,7 +2326,7 @@ body.recipient-mode #guide-modal {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: radial-gradient(circle, #888 30%, #444 80%);
+  background: radial-gradient(circle, #aaa 30%, #444 80%);
   box-shadow: inset 0 1px 1px #fff;
 }
 .cassette-top-screw.left-screw { left: 12px; }
@@ -2300,9 +2336,9 @@ body.recipient-mode #guide-modal {
 .cassette-label {
   background: #fbf7ee;
   border-radius: 8px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   border: 1px solid #d4c5a9;
-  box-shadow: inset 0 0 8px rgba(0,0,0,0.06);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.08);
   position: relative;
 }
 
@@ -2314,25 +2350,25 @@ body.recipient-mode #guide-modal {
   font-weight: 800;
   color: #7a6e5d;
   letter-spacing: 1px;
-  border-bottom: 1.5px solid #e23636;
-  padding-bottom: 3px;
-  margin-bottom: 5px;
+  border-bottom: 2px solid #e23636;
+  padding-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .cassette-song-title {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: 15px;
+  font-size: 15.5px;
   color: #1a1a1a;
   letter-spacing: 0.3px;
 }
 
 .cassette-quote {
   font-family: var(--font-hand);
-  font-size: 13.5px;
+  font-size: 14px;
   color: #b8162f;
   font-weight: 700;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 /* Khu vực bánh xe băng cassette */
@@ -2340,29 +2376,29 @@ body.recipient-mode #guide-modal {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 18px;
   margin: 14px 0 10px 0;
   background: #0d0c12;
-  border-radius: 8px;
-  padding: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 12px;
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
 }
 
 .cassette-wheel {
-  width: 52px;
-  height: 52px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: #ffffff;
-  border: 3px solid #ddd;
+  border: 3px solid #ccc;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
 }
 
 .cassette-player-wrapper.playing .cassette-wheel {
-  animation: spinReel 2.2s linear infinite;
+  animation: spinReel 2s linear infinite;
 }
 
 @keyframes spinReel {
@@ -2375,14 +2411,13 @@ body.recipient-mode #guide-modal {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: 
-    repeating-conic-gradient(#333 0deg 30deg, transparent 30deg 60deg);
-  opacity: 0.85;
+  background: repeating-conic-gradient(#222 0deg 30deg, transparent 30deg 60deg);
+  opacity: 0.9;
 }
 
 .wheel-center {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: #0d0c12;
   z-index: 2;
@@ -2392,10 +2427,10 @@ body.recipient-mode #guide-modal {
 /* Cửa sổ băng từ */
 .cassette-window {
   flex: 1;
-  height: 38px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1.5px solid rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 5px;
   position: relative;
   display: flex;
   align-items: center;
@@ -2404,8 +2439,8 @@ body.recipient-mode #guide-modal {
 }
 
 .cassette-tape-roll {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: radial-gradient(circle, #3b281c 60%, #1a120c 100%);
   border: 1px solid #5a3e2b;
@@ -2417,42 +2452,41 @@ body.recipient-mode #guide-modal {
   background: #2b1d14;
 }
 
-/* Nút Play & Equalizer */
+/* Nút Play/Pause & Equalizer */
 .cassette-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 8px;
+  margin-top: 10px;
 }
 
 .cassette-play-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   background: linear-gradient(135deg, #e23636 0%, #9e1428 100%);
   color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 20px;
   font-family: var(--font-sans);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(226, 54, 54, 0.4);
+  box-shadow: 0 4px 15px rgba(226, 54, 54, 0.5);
   transition: all 0.2s ease;
 }
 
 .cassette-play-btn:hover {
   transform: translateY(-1px);
   background: linear-gradient(135deg, #ff4d4d 0%, #b81830 100%);
-  box-shadow: 0 6px 16px rgba(226, 54, 54, 0.6);
 }
 
 .cassette-equalizer {
   display: flex;
   align-items: flex-end;
-  gap: 3px;
-  height: 20px;
+  gap: 3.5px;
+  height: 22px;
 }
 
 .cassette-equalizer span {
@@ -2471,292 +2505,273 @@ body.recipient-mode #guide-modal {
 
 @keyframes eqBar {
   0% { height: 4px; }
-  100% { height: 20px; background: #00f2fe; }
+  100% { height: 22px; background: #00f2fe; }
 }
 
 /* ==========================================================
-   KHE RÚT TỜ TIỀN 500.000 VNĐ
+   VOUCHER GIFT CUỘN RA TỰ ĐỘNG SAU 3 GIÂY
+   "No là vô giá nên tự thưởng cho 500k"
    ========================================================== */
-.cassette-money-slot {
-  width: 95%;
-  margin-top: -15px; /* Nằm luồn sau thân cassette */
+.cassette-voucher-slot {
+  width: 96%;
+  margin-top: -12px;
   position: relative;
-  z-index: 2;
-  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  z-index: 4;
 }
 
-/* Tab kéo tiền nhấp nháy */
-.money-pull-tab {
-  background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
-  color: #fff;
-  border: 1.5px solid #90e0ef;
-  border-radius: 0 0 12px 12px;
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(0, 180, 216, 0.4);
-  animation: bouncePull 1.8s infinite ease-in-out;
-  transition: transform 0.25s ease, background 0.25s ease;
-}
-
-.money-pull-tab:hover {
-  background: linear-gradient(135deg, #0096c7 0%, #023e8a 100%);
-  transform: translateY(2px);
-}
-
-@keyframes bouncePull {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(6px); }
-}
-
-.cassette-player-wrapper.money-revealed .money-pull-tab {
-  display: none;
-}
-
-/* Thẻ tờ tiền 500K Polymer */
-.banknote-500k-card {
+.voucher-500k-card {
   width: 100%;
-  background: linear-gradient(135deg, #1d6e87 0%, #15576b 50%, #0e3d4b 100%);
-  border: 2px solid #8fe3ee;
-  border-radius: 10px;
-  padding: 12px 14px;
+  background: linear-gradient(135deg, #1b1924 0%, #121019 100%);
+  border: 2px solid #ffd166;
+  border-radius: 12px;
+  padding: 16px;
   box-shadow: 
-    0 15px 35px rgba(0, 0, 0, 0.7),
-    0 0 25px rgba(0, 180, 216, 0.4);
-  color: #e8f9fd;
+    0 20px 45px rgba(0, 0, 0, 0.85),
+    0 0 30px rgba(255, 209, 102, 0.35);
+  color: #fff;
   box-sizing: border-box;
-  display: none; /* Mặc định ẩn trong khe, kéo ra mới bung */
-  transform: translateY(-20px) scale(0.92);
   opacity: 0;
-  transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  transform: translateY(-80px) scaleY(0.2);
+  transform-origin: top center;
+  pointer-events: none;
+  transition: all 0.9s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-.cassette-player-wrapper.money-revealed .banknote-500k-card {
-  display: block;
-  transform: translateY(12px) scale(1);
+/* Khi kích hoạt cuộn ra sau 3s */
+.cassette-player-wrapper.voucher-rolled-out .voucher-500k-card {
   opacity: 1;
-  animation: slideOutMoney 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  transform: translateY(18px) scaleY(1);
+  pointer-events: auto;
+  animation: rollOutVoucher 1s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
 }
 
-@keyframes slideOutMoney {
-  0% { transform: translateY(-40px) scale(0.9); opacity: 0; }
-  100% { transform: translateY(12px) scale(1); opacity: 1; }
+@keyframes rollOutVoucher {
+  0% {
+    opacity: 0;
+    transform: translateY(-80px) scaleY(0.1);
+    box-shadow: 0 0 0 rgba(255, 209, 102, 0);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(24px) scaleY(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(18px) scaleY(1);
+    box-shadow: 
+      0 20px 45px rgba(0, 0, 0, 0.85),
+      0 0 35px rgba(255, 209, 102, 0.45);
+  }
 }
 
-.banknote-inner {
-  border: 1px dashed rgba(143, 227, 238, 0.45);
-  border-radius: 7px;
-  padding: 8px 10px;
-  background: radial-gradient(circle at center, rgba(38, 141, 168, 0.35) 0%, transparent 80%);
+.voucher-inner {
+  border: 1.5px dashed rgba(255, 209, 102, 0.5);
+  border-radius: 8px;
+  padding: 14px;
+  background: radial-gradient(circle at center, rgba(255, 59, 92, 0.12) 0%, transparent 80%);
+  position: relative;
+  text-align: center;
 }
 
-.banknote-top-bar {
+.voucher-spidey-stamp {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-bottom: 1px solid rgba(143, 227, 238, 0.35);
-  padding-bottom: 4px;
+  background: rgba(226, 54, 54, 0.2);
+  border: 1px solid rgba(226, 54, 54, 0.5);
+  border-radius: 6px;
+  padding: 2px 6px;
+}
+
+.stamp-icon { font-size: 16px; }
+.stamp-badge { font-size: 7.5px; font-weight: 800; color: #ff758c; letter-spacing: 0.5px; }
+
+.voucher-headline {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #ffd166;
+  text-transform: uppercase;
   margin-bottom: 8px;
 }
 
-.banknote-nation {
-  font-size: 9px;
+/* Câu quote trung tâm chuẩn ý user */
+.voucher-quote-box {
+  background: rgba(255, 59, 92, 0.18);
+  border: 1.5px solid rgba(255, 59, 92, 0.5);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  box-shadow: inset 0 0 10px rgba(255, 59, 92, 0.2);
+}
+
+.voucher-main-quote {
+  font-family: var(--font-hand);
+  font-size: 20px;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: #bbf0f8;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 59, 92, 0.9);
+  margin: 0;
+  line-height: 1.35;
 }
 
-.banknote-bank-name {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
+/* Số tiền 500.000 VNĐ */
+.voucher-amount-display {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.currency-symbol {
+  font-size: 20px;
+  font-weight: 700;
+  color: #00f2fe;
+}
+
+.amount-number {
+  font-family: var(--font-sans);
+  font-size: 38px;
+  font-weight: 900;
   color: #ffffff;
-  text-shadow: 0 0 8px rgba(0, 180, 216, 0.6);
+  letter-spacing: 1px;
+  text-shadow: 0 0 15px rgba(0, 242, 254, 0.8), 0 2px 5px rgba(0,0,0,0.8);
 }
 
-.banknote-main-content {
+.currency-unit {
+  font-size: 14px;
+  font-weight: 800;
+  color: #00f2fe;
+  letter-spacing: 1px;
+}
+
+/* Thông tin chi tiết */
+.voucher-meta-info {
+  margin: 12px 0;
+  padding: 8px 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.meta-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  font-size: 11.5px;
 }
 
-.banknote-left-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.meta-label {
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 600;
 }
 
-.banknote-big-number {
-  font-family: var(--font-sans);
-  font-weight: 900;
-  font-size: 18px;
-  color: #bbf0f8;
-}
-
-.banknote-spidey-seal {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(143, 227, 238, 0.4);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 4px;
-}
-
-.spidey-watermark-icon { font-size: 15px; }
-.seal-text { font-size: 7px; font-weight: 800; color: #8fe3ee; letter-spacing: 0.5px; }
-
-.banknote-center-col {
-  flex: 1;
-  text-align: center;
-}
-
-.banknote-amount-large {
-  font-family: var(--font-sans);
-  font-weight: 900;
-  font-size: 26px;
-  color: #ffffff;
-  letter-spacing: 1px;
-  text-shadow: 0 0 10px rgba(0, 180, 216, 0.8), 0 2px 4px rgba(0,0,0,0.5);
-  line-height: 1;
-}
-
-.banknote-amount-text {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #8fe3ee;
-  margin-top: 2px;
-}
-
-.banknote-memo {
-  font-size: 9.5px;
-  margin-top: 5px;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 3px 6px;
-  border-radius: 4px;
-  color: #fff;
-}
-
-.banknote-pledge {
-  font-size: 9.5px;
-  font-style: italic;
-  color: #bbf0f8;
-  margin-top: 4px;
-}
-
-.banknote-right-col {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.banknote-serial-tag {
-  font-family: monospace;
-  font-size: 9px;
-  font-weight: 700;
+.meta-val {
   color: #ffd166;
-  letter-spacing: 1px;
-  margin-bottom: 3px;
-}
-
-.banknote-portrait-window {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  border: 2px solid #8fe3ee;
-  overflow: hidden;
-  background: #111;
-  position: relative;
-  box-shadow: 0 0 10px rgba(0, 180, 216, 0.4);
-}
-
-.banknote-portrait-window img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.banknote-sign-area {
-  font-size: 8.5px;
-  color: #8fe3ee;
-  margin-top: 3px;
-}
-
-.banknote-bottom-bar {
-  border-top: 1px solid rgba(143, 227, 238, 0.35);
-  margin-top: 6px;
-  padding-top: 3px;
-  text-align: center;
-}
-
-.security-strip {
-  font-size: 8.5px;
   font-weight: 700;
-  color: #8fe3ee;
-  letter-spacing: 1px;
+  text-align: right;
 }
 
-.banknote-actions {
-  margin-top: 10px;
+/* Ảnh chân dung trên voucher */
+.voucher-portrait-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 12px 0 8px 0;
+}
+
+.voucher-portrait {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid #ffd166;
+  object-fit: cover;
+  box-shadow: 0 0 12px rgba(255, 209, 102, 0.5);
+  background: #111;
+}
+
+.portrait-note {
+  font-family: var(--font-hand);
+  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
+}
+
+/* Nút bấm đòi tiền */
+.voucher-actions {
+  margin-top: 12px;
   display: flex;
   justify-content: center;
 }
 
-.claim-money-btn {
+.claim-voucher-btn {
   background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%);
   color: #fff;
   border: 1.5px solid #fff;
-  border-radius: 20px;
-  padding: 8px 18px;
+  border-radius: 25px;
+  padding: 10px 24px;
   font-family: var(--font-sans);
-  font-size: 13px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.5);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 18px rgba(0, 180, 216, 0.6);
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
 }
 
-.claim-money-btn:hover {
-  transform: scale(1.04);
+.claim-voucher-btn:hover {
+  transform: scale(1.05);
   background: linear-gradient(135deg, #48cae4 0%, #0096c7 100%);
-  box-shadow: 0 6px 20px rgba(0, 180, 216, 0.8);
+  box-shadow: 0 6px 24px rgba(0, 180, 216, 0.85);
 }
 
 /* Toast chúc mừng */
-.money-claimed-toast {
-  margin-top: 16px;
-  background: rgba(14, 61, 75, 0.9);
-  border: 1.5px solid #8fe3ee;
-  border-radius: 20px;
-  padding: 8px 16px;
-  font-size: 12.5px;
+.voucher-toast {
+  margin-top: 35px;
+  background: rgba(255, 59, 92, 0.2);
+  border: 1.5px solid #ff3b5c;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 13px;
   font-weight: 700;
-  color: #e0f7fa;
+  color: #fff;
   display: none;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 0 20px rgba(0, 180, 216, 0.5);
+  box-shadow: 0 0 25px rgba(255, 59, 92, 0.5);
   animation: fadeIn 0.4s ease forwards;
+  text-align: center;
+  max-width: 440px;
 }
 
-.money-claimed-toast.active {
-  display: inline-flex;
+.voucher-toast.active {
+  display: block;
 }
 
-/* Tiền 500k bay ăn mừng */
+.cassette-bottom-actions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Nút mở cassette ở trang thư nhấp nháy */
+.pulse-glow {
+  animation: pulseGlowBtn 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlowBtn {
+  0%, 100% { box-shadow: 0 0 15px rgba(226, 54, 54, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(255, 59, 92, 0.9), 0 0 50px rgba(226, 54, 54, 0.4); transform: scale(1.02); }
+}
+
+/* Tiền rơi ăn mừng */
 .falling-money-bill {
   position: fixed;
   font-size: 26px;

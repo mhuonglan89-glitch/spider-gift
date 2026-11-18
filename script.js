@@ -150,7 +150,8 @@ const scenes = {
   bouquet: document.getElementById('scene-bouquet'),
   flying: document.getElementById('scene-flying'),
   envelope: document.getElementById('scene-envelope'),
-  letter: document.getElementById('scene-letter')
+  letter: document.getElementById('scene-letter'),
+  cassette: document.getElementById('scene-cassette')
 };
 
 const holdTarget = document.getElementById('hold-target');
@@ -234,7 +235,11 @@ function renderUI() {
     }
   }
 
-  // 5. Cập nhật ảnh chân dung No trên tờ tiền 500.000 VNĐ
+  // 5. Cập nhật ảnh chân dung No trên Voucher 500.000 VNĐ
+  const voucherPortraitImg = document.getElementById('voucher-portrait-img');
+  if (voucherPortraitImg) {
+    voucherPortraitImg.src = appConfig.couplePhoto || (appConfig.bouquetPhotos && appConfig.bouquetPhotos[0]) || '';
+  }
   const banknoteImg = document.getElementById('banknote-portrait-img');
   if (banknoteImg) {
     banknoteImg.src = appConfig.couplePhoto || (appConfig.bouquetPhotos && appConfig.bouquetPhotos[0]) || '';
@@ -283,6 +288,12 @@ function switchScene(sceneName) {
 
   if (sceneName === 'letter') {
     createFallingSpiderSparks();
+  }
+
+  if (sceneName === 'cassette') {
+    startCassetteScene();
+  } else {
+    stopCassetteScene();
   }
 }
 
@@ -656,6 +667,30 @@ btnReplay.addEventListener('click', () => {
 btnShareTrigger.addEventListener('click', () => {
   openGuideModal();
 });
+
+// Nút chuyển sang trang Băng Cassette & Voucher 500k cho No
+const btnOpenCassette = document.getElementById('btn-open-cassette');
+if (btnOpenCassette) {
+  btnOpenCassette.addEventListener('click', () => {
+    switchScene('cassette');
+  });
+}
+
+// Nút quay lại đọc thư từ trang cassette
+const btnBackToLetter = document.getElementById('btn-back-to-letter');
+if (btnBackToLetter) {
+  btnBackToLetter.addEventListener('click', () => {
+    switchScene('letter');
+  });
+}
+
+// Nút xem lại từ đầu trên trang cassette
+const btnCassetteReplay = document.getElementById('btn-cassette-replay');
+if (btnCassetteReplay) {
+  btnCassetteReplay.addEventListener('click', () => {
+    switchScene('bouquet');
+  });
+}
 
 
 // ==========================================================
@@ -1404,57 +1439,101 @@ const btnOldDlScript = document.getElementById('btn-download-script-js');
 if (btnCopyConfig) btnCopyConfig.addEventListener('click', executeCopyConfig);
 
 // ==========================================================
-// 8. BƯU KIỆN TIẾP TẾ 500K: CASSETTE RETRO & TỜ TIỀN 500K
+// 8. BƯU KIỆN TIẾP TẾ 500K: CASSETTE RETRO & VOUCHER 500K CHO NO
+// (Trang riêng biệt: Nhạc phát ngay đoạn 'Baby em đâu òi',
+//  sau 3s tự động cuộn ra voucher 'No là vô giá nên tự thưởng cho 500k')
 // ==========================================================
 const cassetteAudio = document.getElementById('cassette-audio');
 const cassetteWrapper = document.getElementById('cassette-player-wrapper');
 const cassettePlayBtn = document.getElementById('cassette-play-btn');
 const cassettePlayIcon = document.getElementById('cassette-play-icon');
 const cassettePlayText = document.getElementById('cassette-play-text');
-const moneyPullTab = document.getElementById('money-pull-tab');
-const banknoteCard = document.getElementById('banknote-500k-card');
-const btnClaimMoney = document.getElementById('btn-claim-money');
-const moneyToast = document.getElementById('money-claimed-toast');
+const voucherCard = document.getElementById('voucher-500k-card');
+const btnClaimVoucher = document.getElementById('btn-claim-voucher');
+const voucherToast = document.getElementById('voucher-toast');
 
 let isCassettePlaying = false;
+let cassetteVoucherTimer = null;
 
-// Đặt nguồn nhạc bài "Để dành cho em" (Dangrangto ft. DONAL)
+// Cài đặt nguồn nhạc chuẩn: webm native (hỗ trợ 100% trình duyệt hiện đại)
 if (cassetteAudio) {
-  cassetteAudio.src = 'assets/de_danh_cho_em.mp3';
-}
-
-function toggleCassettePlay() {
-  if (!cassetteWrapper) return;
-
-  if (isCassettePlaying) {
-    pauseCassette();
-  } else {
-    playCassette();
+  if (!cassetteAudio.src || cassetteAudio.src.endsWith('mp3')) {
+    cassetteAudio.src = 'assets/de_danh_cho_em.webm';
   }
 }
 
-function playCassette() {
+// Bắt đầu phân cảnh Cassette khi người dùng bấm chuyển trang từ thư
+function startCassetteScene() {
+  if (!cassetteWrapper) return;
+
+  // 1. Reset trạng thái cuộn voucher
+  cassetteWrapper.classList.remove('voucher-rolled-out');
+  if (cassetteVoucherTimer) {
+    clearTimeout(cassetteVoucherTimer);
+    cassetteVoucherTimer = null;
+  }
+
+  // 2. Tạm dừng nhạc nền chính để nhường không gian cho bài cassette
+  if (isAudioPlaying && bgAudio) {
+    bgAudio.pause();
+    stopProceduralPiano();
+  }
+
+  // 3. Tự động phát nhạc ngay đoạn Verse 2 ("Baby em đâu òi, nhanh lên anh đang đợi...")
+  playCassetteTrack();
+
+  // 4. Đúng 3 giây sau: Máy cassette tự động cuộn voucher 500k ra
+  cassetteVoucherTimer = setTimeout(() => {
+    rollOutVoucher();
+  }, 3000);
+}
+
+// Dừng phân cảnh Cassette khi rời trang
+function stopCassetteScene() {
+  if (cassetteVoucherTimer) {
+    clearTimeout(cassetteVoucherTimer);
+    cassetteVoucherTimer = null;
+  }
+  pauseCassette();
+}
+
+// Hàm phát nhạc bài "Để Dành Cho Em" đúng đoạn đắt giá
+function playCassetteTrack() {
   if (!cassetteWrapper) return;
   isCassettePlaying = true;
   cassetteWrapper.classList.add('playing');
   if (cassettePlayIcon) cassettePlayIcon.textContent = '⏸';
   if (cassettePlayText) cassettePlayText.textContent = 'TẠM DỪNG CASSETTE';
 
-  // Tạm dừng nhạc nền chính để nhường âm thanh cho bài cassette
-  if (isAudioPlaying && bgAudio) {
-    bgAudio.pause();
-    stopProceduralPiano();
-  }
-
   if (cassetteAudio) {
-    cassetteAudio.play().catch(e => {
-      console.log('Audio autoplay or file not found, playing melodic cassette vibes', e);
-      // Fallback synthesizer giai điệu ngọt ngào nếu chưa có file mp3
-      playCassetteMelody();
-    });
+    // Timestamp đoạn "Baby em đâu òi, nhanh lên anh đang đợi...": 163.5s (02:43.5)
+    const lyricTimestamp = 163.5;
+    try {
+      if (cassetteAudio.readyState >= 1) {
+        cassetteAudio.currentTime = lyricTimestamp;
+      } else {
+        cassetteAudio.addEventListener('loadedmetadata', function onLoadedMeta() {
+          cassetteAudio.removeEventListener('loadedmetadata', onLoadedMeta);
+          cassetteAudio.currentTime = lyricTimestamp;
+        });
+      }
+    } catch (e) {
+      console.log('Error setting currentTime:', e);
+    }
+
+    const playPromise = cassetteAudio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(e => {
+        console.warn('Cassette audio autoplay blocked or file missing, playing melodic vibes:', e);
+        playCassetteMelody();
+      });
+    }
+  } else {
+    playCassetteMelody();
   }
 }
 
+// Tạm dừng cassette
 function pauseCassette() {
   if (!cassetteWrapper) return;
   isCassettePlaying = false;
@@ -1467,53 +1546,60 @@ function pauseCassette() {
   }
 }
 
+// Nút bấm Play/Pause trên máy Cassette
+function toggleCassettePlay() {
+  if (isCassettePlaying) {
+    pauseCassette();
+  } else {
+    playCassetteTrack();
+  }
+}
+
 if (cassettePlayBtn) {
   cassettePlayBtn.addEventListener('click', toggleCassettePlay);
 }
 
-// Kéo / Rút tờ tiền 500.000 VNĐ ra
-function pullOutMoney() {
+// Hành động cuộn Voucher 500k ra ngoài máy cassette
+function rollOutVoucher() {
   if (!cassetteWrapper) return;
   
-  if (!cassetteWrapper.classList.contains('money-revealed')) {
-    cassetteWrapper.classList.add('money-revealed');
+  if (!cassetteWrapper.classList.contains('voucher-rolled-out')) {
+    cassetteWrapper.classList.add('voucher-rolled-out');
 
-    // Tự động phát nhạc nếu chưa phát
+    // Nếu nhạc chưa chạy thì kích hoạt
     if (!isCassettePlaying) {
-      playCassette();
+      playCassetteTrack();
     }
 
-    // Hiệu ứng âm thanh kéo tiền / giấy
+    // Âm thanh cuộn giấy / trượt voucher
     playPaperSlideSound();
 
-    // Hiệu ứng pháo hoa & tiền 500k bay ngập tràn màn hình
+    // Hiệu ứng pháo hoa & tiền 500k rơi ngập tràn màn hình
     spawnMoneyCelebration();
 
-    if (moneyToast) {
-      moneyToast.classList.add('active');
+    if (voucherToast) {
+      voucherToast.classList.add('active');
     }
   }
 }
 
-if (moneyPullTab) {
-  moneyPullTab.addEventListener('click', pullOutMoney);
-}
-if (banknoteCard) {
-  banknoteCard.addEventListener('click', pullOutMoney);
+// Cho phép bấm trực tiếp vào voucher để cuộn ra nhanh nếu không muốn đợi 3s
+if (voucherCard) {
+  voucherCard.addEventListener('click', rollOutVoucher);
 }
 
-// Bấm nút Ting Ting đòi tiền
-if (btnClaimMoney) {
-  btnClaimMoney.addEventListener('click', () => {
-    const claimMsg = 'No đã nhận được gói tiếp tế 500.000đ từ đồng đội số 1 rồi nè! Mau mau ting ting chuyển khoản cho No đi anh ơiii 🕷️💵❤️';
+// Bấm nút Ting Ting đòi tiền trên Voucher
+if (btnClaimVoucher) {
+  btnClaimVoucher.addEventListener('click', () => {
+    const claimMsg = 'No là vô giá nên tự thưởng cho 500k nè, mau ting ting chuyển khoản cho No đi anh ơiii 🕷️💵❤️';
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(claimMsg).then(() => {
-        alert('🎉 ĐÃ SAO CHÉP LỜI ĐÒI TIỀN!\n\n"' + claimMsg + '"\n\nHãy gửi ngay tin nhắn này cho người gửi web để nhận 500k ting ting liền tay nha No ơi! 💌💸');
+        alert('🎉 ĐÃ SAO CHÉP LỜI ĐÒI TIỀN!\n\n"' + claimMsg + '"\n\nHãy gửi ngay tin nhắn này cho đồng đội để nhận 500k ting ting liền tay nha No ơi! 💌💸');
       }).catch(() => {
-        prompt('Hãy copy dòng này gửi cho người gửi nha:', claimMsg);
+        prompt('Hãy copy dòng này gửi cho đồng đội nha:', claimMsg);
       });
     } else {
-      prompt('Hãy copy dòng này gửi cho người gửi nha:', claimMsg);
+      prompt('Hãy copy dòng này gửi cho đồng đội nha:', claimMsg);
     }
   });
 }
